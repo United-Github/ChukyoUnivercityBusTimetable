@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <Button
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    >
+
+    <ImageButton
         android:id="@+id/time_header_previous"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:theme="@style/MyButton"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_gravity="center"
-        android:text="前"
-        style="@style/Widget.AppCompat.Button.Borderless"/>
+        android:background="@drawable/ripple"
+        android:elevation="4dp"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/ic_navigation_previous"
+        android:stateListAnimator="@drawable/round_button" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -38,6 +45,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:orientation="horizontal">
 
             <TextView
@@ -74,12 +82,17 @@
         </LinearLayout>
     </LinearLayout>
 
-    <Button
+    <ImageButton
         android:id="@+id/time_header_next"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:layout_gravity="center"
-        android:text="次"
-        android:theme="@style/MyButton" />
+        android:background="@drawable/ripple"
+        android:elevation="4dp"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/ic_navigation_next"
+        android:stateListAnimator="@drawable/round_button" />
+
 </LinearLayout>
