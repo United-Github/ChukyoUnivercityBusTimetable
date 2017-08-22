@@ -1,0 +1,2 @@
+# ChukyoUnivercityBusTimetable
+中京大学のバス時刻表だよ
