@@ -72,7 +72,7 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
     public void setRemainingTime(int minutes, int remainingTime){
         for (TimeMinutesItemView item : mList) {
             if (item.timeMinutesListItemModel.minutes == minutes){
-                item.timeMinutesListItemModel.remainingTime = remainingTime;
+                item.remainingTime = remainingTime;
                 if (item.holder != null){
                     item.holder.minutesText.setText(Integer.toString(minutes));
                 }
@@ -83,7 +83,7 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
     public void clearRemainingTime(int minutes){
         for (TimeMinutesItemView item : mList) {
             if (item.timeMinutesListItemModel.minutes == minutes){
-                item.timeMinutesListItemModel.remainingTime = 0;
+                item.remainingTime = 0;
                 if (item.holder != null) {
                     item.holder.minutesText.setText("");
                 }
@@ -169,12 +169,14 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
         private int hour;
         private boolean isHighLight;
         private boolean enabled;
+        private int remainingTime;
         private int enableTextColor;
         private int disableTextColor;
         private OnBusTimeItemClickListener listener;
         public TimeMinutesItemView(Context context){
             isHighLight = false;
             enabled = true;
+            remainingTime = 0;
             enableTextColor = ContextCompat.getColor(context, R.color.colorBusTimeMinutesTextEnable);
             disableTextColor = ContextCompat.getColor(context, R.color.colorBusTimeMinutesTextDisable);
         }
@@ -188,10 +190,10 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
 
             holder.minutesText.setText(Integer.toString(timeMinutesListItemModel.minutes));
 
-            if (timeMinutesListItemModel.remainingTime == 0) {
+            if (remainingTime == 0) {
                 holder.remainingTime.setText("");
             } else {
-                holder.remainingTime.setText(Integer.toString(timeMinutesListItemModel.remainingTime));
+                holder.remainingTime.setText(Integer.toString(remainingTime));
             }
             setBackgroundColor(isHighLight);
             if (enabled){
