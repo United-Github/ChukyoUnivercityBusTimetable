@@ -24,37 +24,41 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.support.android.designlibdemo.TimetableList.layout.BusTimeListViewManager;
+import com.support.android.designlibdemo.TimetableList.layout.OnBusTimeItemClickListener;
+import com.support.android.designlibdemo.TimetableList.layout.TimeListCustomAdapter;
+import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
+import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class CheeseListFragment extends Fragment {
+import butterknife.BindView;
 
+public class CheeseListFragment extends Fragment {
+    private BusTimeListViewManager busTimeListViewManager;
+    private TimeListCustomAdapter adapter;
+    @BindView(R.id.time_list_scrollview)
+    ScrollView scrollView;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        RecyclerView rv = (RecyclerView) inflater.inflate(
-//                R.layout.fragment_cheese_list, container, false);
         View rv = inflater.inflate(R.layout.fragment_cheese_list, container, false);
-        RecyclerView rr = (RecyclerView)rv.findViewById(R.id.recyclerview);
-//        setupRecyclerView(rv);
-        setupRecyclerView(rr);
+        busTimeListViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list_scrollview));
+        adapter = new TimeListCustomAdapter(getContext());
+        setTestData();
         return rv;
-    }
-
-    private void setupRecyclerView(RecyclerView recyclerView) {
-        recyclerView.setLayoutManager(new LinearLayoutManager(recyclerView.getContext()));
-        recyclerView.setAdapter(new SimpleStringRecyclerViewAdapter(getActivity(),
-                getRandomSublist(Cheeses.sCheeseStrings, 30)));
     }
 
     private List<String> getRandomSublist(String[] array, int amount) {
@@ -66,72 +70,53 @@ public class CheeseListFragment extends Fragment {
         return list;
     }
 
-    public static class SimpleStringRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleStringRecyclerViewAdapter.ViewHolder> {
-
-        private final TypedValue mTypedValue = new TypedValue();
-        private int mBackground;
-        private List<String> mValues;
-
-        public static class ViewHolder extends RecyclerView.ViewHolder {
-            public String mBoundString;
-
-            public final View mView;
-            public final ImageView mImageView;
-            public final TextView mTextView;
-
-            public ViewHolder(View view) {
-                super(view);
-                mView = view;
-                mImageView = (ImageView) view.findViewById(R.id.avatar);
-                mTextView = (TextView) view.findViewById(android.R.id.text1);
-            }
-
+    private void setTestData(){
+        TimeItemModel timeItemModel = new TimeItemModel();
+        timeItemModel.hour = 1;
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
+        busTimeListViewManager.addTimeItemModel(timeItemModel);
+        timeItemModel = new TimeItemModel();
+        timeItemModel.hour = 2;
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
+        busTimeListViewManager.addTimeItemModel(timeItemModel);
+        timeItemModel = new TimeItemModel();
+        timeItemModel.hour = 3;
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
+        busTimeListViewManager.addTimeItemModel(timeItemModel);
+        timeItemModel = new TimeItemModel();
+        timeItemModel.hour = 4;
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
+        busTimeListViewManager.addTimeItemModel(timeItemModel);
+        timeItemModel = new TimeItemModel();
+        timeItemModel.hour = 5;
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
+        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
+        busTimeListViewManager.addTimeItemModel(timeItemModel);
+        busTimeListViewManager.setRemainingTime(1, 1, 5);
+        busTimeListViewManager.setRemainingTime(1, 10, 10);
+        busTimeListViewManager.setRemainingTime(1, 20, 2);
+        busTimeListViewManager.clearRemainingTime(1, 20);
+        busTimeListViewManager.setBusTimeClickListener(new OnBusTimeItemClickListener() {
             @Override
-            public String toString() {
-                return super.toString() + " '" + mTextView.getText();
+            public void onItemClick(int hour, int minutes) {
+                Log.d("hoge", Integer.toString(hour) + " : " + Integer.toString(minutes));
             }
-        }
-
-        public SimpleStringRecyclerViewAdapter(Context context, List<String> items) {
-            context.getTheme().resolveAttribute(R.attr.selectableItemBackground, mTypedValue, true);
-            mBackground = mTypedValue.resourceId;
-            mValues = items;
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.list_item, parent, false);
-            view.setBackgroundResource(mBackground);
-            return new ViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.mBoundString = mValues.get(position);
-            holder.mTextView.setText(mValues.get(position));
-
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = v.getContext();
-                    Intent intent = new Intent(context, CheeseDetailActivity.class);
-                    intent.putExtra(CheeseDetailActivity.EXTRA_NAME, holder.mBoundString);
-
-                    context.startActivity(intent);
-                }
-            });
-
-            Glide.with(holder.mImageView.getContext())
-                    .load(Cheeses.getRandomCheeseDrawable())
-                    .fitCenter()
-                    .into(holder.mImageView);
-        }
-
-        @Override
-        public int getItemCount() {
-            return mValues.size();
-        }
+        });
+        busTimeListViewManager.setUntilDisable(2, 20);
+        busTimeListViewManager.setCurrentTime(3, 1);
     }
 }

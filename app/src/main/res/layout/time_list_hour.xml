@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/time_list_hour_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    >
+<TextView
+    android:id="@+id/time_list_hour_text"
+    android:layout_width="50dp"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal"
+    style="@style/TimeListTextStyle"
+    />
+    <com.support.android.designlibdemo.TimetableList.layout.NonScrollListView
+        android:id="@+id/time_list_minutes_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/TimeListTextStyle"
+        android:paddingRight="20dp"
+        />
+</LinearLayout>
