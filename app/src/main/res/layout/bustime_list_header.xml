@@ -3,6 +3,8 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
+    android:background="@drawable/under_line_timetable_header"
+    android:elevation="1.8dp"
     >
 
     <ImageButton
@@ -21,7 +23,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -32,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="10:20 発" />
+                android:text=" 3:20 発" />
 
             <TextView
                 android:id="@+id/time_header_schedule_type"
