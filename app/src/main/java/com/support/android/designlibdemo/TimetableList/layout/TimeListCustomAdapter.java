@@ -11,8 +11,10 @@ import android.widget.TextView;
 import com.support.android.designlibdemo.R;
 import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,18 +71,20 @@ public class TimeListCustomAdapter extends BaseAdapter {
     }
     // 残り時間を設定する
     public void setRemainingTime(int hour, int minutes, int remainingTime){
-        for (TimeItemView item : mDataList) {
-            if (item.timeItemModel.hour == hour){
-                item.mAdapter.setRemainingTime(minutes, remainingTime);
-            }
+        try {
+            final TimeItemView itemView = getTimeItemViewFromHour(hour);
+            itemView.mAdapter.setRemainingTime(minutes, remainingTime);
+        } catch (NonHourException e) {
+            return;
         }
     }
     // 残り時間を消す
     public void clearRemainingTime(int hour, int minutes){
-        for (TimeItemView item : mDataList) {
-            if (item.timeItemModel.hour == hour){
-                item.mAdapter.clearRemainingTime(minutes);
-            }
+        try{
+            final TimeItemView itemView = getTimeItemViewFromHour(hour);
+            itemView.mAdapter.clearRemainingTime(minutes);
+        } catch (NonHourException e) {
+            return;
         }
     }
     private int mHightLightMemoryHour = -1;
@@ -90,42 +94,46 @@ public class TimeListCustomAdapter extends BaseAdapter {
         if (mHightLightMemoryHour == -1 || mHightLightMemoryMinutes == -1){
             return;
         }
-        for (TimeItemView item : mDataList) {
-            if (item.timeItemModel.hour == mHightLightMemoryHour){
-                item.mAdapter.clearHightLight(mHightLightMemoryMinutes);
-                mHightLightMemoryHour = -1;
-                mHightLightMemoryMinutes = -1;
-            }
+        try {
+            final TimeItemView itemView = getTimeItemViewFromHour(mHightLightMemoryHour);
+            itemView.mAdapter.clearHightLight(mHightLightMemoryMinutes);
+            mHightLightMemoryHour = -1;
+            mHightLightMemoryMinutes = -1;
+        } catch (NonHourException e) {
+            return;
         }
     }
     // 指定場所をハイライトして、その場所を覚えておく
     public void setHightLight(int hour, int minutes){
         clearHightLight();
-        for (TimeItemView item : mDataList) {
-            if (item.timeItemModel.hour == hour){
-                item.mAdapter.setHightLight(minutes);
-                mHightLightMemoryHour = hour;
-                mHightLightMemoryMinutes = minutes;
-            }
+        try {
+            final TimeItemView itemView = getTimeItemViewFromHour(hour);
+            clearHightLight();
+            itemView.mAdapter.setHightLight(minutes);
+            mHightLightMemoryHour = hour;
+            mHightLightMemoryMinutes = minutes;
+
+        } catch (NonHourException e) {
+            return;
         }
     }
 
     public int getViewY(int hour, int minutes){
-        for (TimeItemView item : mDataList) {
-            if (item.timeItemModel.hour == hour){
-                final int y = item.mAdapter.getViewY(minutes);
-                if (y != -1){
-                    return item.holder.linearLayout.getTop() + item.mAdapter.getViewY(minutes);
-                } else {
-                    return -1;
-                }
+        try {
+            final TimeItemView itemView = getTimeItemViewFromHour(hour);
+            final int y = itemView.mAdapter.getViewY(minutes);
+            if (y != -1){
+                return itemView.holder.linearLayout.getTop() + itemView.mAdapter.getViewY(minutes);
+            } else {
+                return -1;
             }
+        } catch (NonHourException e) {
+            return -1;
         }
-        return -1;
     }
     public void setAllItemClickListener(OnBusTimeItemClickListener listener){
-        for(int i = 0;i < mDataList.size();i ++){
-            mDataList.get(i).setOnItemListener(listener);
+        for (final TimeItemView itemView : mDataList){
+            itemView.setOnItemListener(listener);
         }
     }
     public void setUntilState(int hour, int minutes, boolean enabled){
@@ -143,6 +151,14 @@ public class TimeListCustomAdapter extends BaseAdapter {
         for(final TimeItemView item : mDataList) {
             item.mAdapter.setAllState(true);
         }
+    }
+    private TimeItemView getTimeItemViewFromHour(int hour) throws NonHourException{
+        for (final TimeItemView item : mDataList) {
+            if (item.timeItemModel.hour == hour) {
+                return item;
+            }
+        }
+        throw new NonHourException();
     }
 
     static class ViewHolder {
@@ -162,12 +178,14 @@ public class TimeListCustomAdapter extends BaseAdapter {
         TimeItemModel timeItemModel;
         TimeListMinutesCustomAdapter mAdapter;
         OnBusTimeItemClickListener listener;
+
         public TimeItemView(Context context, TimeItemModel itemModel){
             timeItemModel = itemModel;
             mAdapter = new TimeListMinutesCustomAdapter(context);
             mAdapter.setMinutesList(timeItemModel.minutesList);
             listener = null;
         }
+
         public void setDataToView(){
             holder.hourText.setText(Integer.toString(timeItemModel.hour));
             if (listener != null) {
@@ -199,7 +217,11 @@ public class TimeListCustomAdapter extends BaseAdapter {
             }
         }
     }
-
-
-
+    private static class NonHourException extends ExecutionException{
+        @Override
+        public String getMessage() {
+            return "存在しない時刻";
+        }
+    }
 }
+
