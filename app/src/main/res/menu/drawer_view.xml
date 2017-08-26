@@ -18,15 +18,15 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/nav_timetable"
             android:icon="@drawable/ic_dashboard"
             android:title="時刻表" />
         <item
-            android:id="@+id/nav_messages"
+            android:id="@+id/nav_search"
             android:icon="@drawable/ic_event"
             android:title="時刻表検索" />
         <item
-            android:id="@+id/nav_friends"
+            android:id="@+id/nav_setting"
             android:icon="@drawable/ic_headset"
             android:title="設定" />
     </group>

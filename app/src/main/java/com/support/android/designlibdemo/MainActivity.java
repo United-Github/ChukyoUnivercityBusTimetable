@@ -18,6 +18,8 @@ package com.support.android.designlibdemo;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -39,9 +41,10 @@ import java.util.List;
 /**
  * TODO
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout mDrawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
@@ -144,6 +147,20 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    // Navigationを選択した時の動作
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.nav_timetable:
+                break;
+            case R.id.nav_search:
+                break;
+            case R.id.nav_setting:
+                break;
+        }
+        return false;
     }
 
     static class Adapter extends FragmentPagerAdapter {
