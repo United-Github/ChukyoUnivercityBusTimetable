@@ -117,6 +117,6 @@ public class CheeseListFragment extends Fragment {
             }
         });
         busTimeListViewManager.setUntilDisable(2, 20);
-        busTimeListViewManager.setCurrentTime(3, 1);
+        busTimeListViewManager.setCurrentTime(3, 20);
     }
 }
