@@ -46,7 +46,7 @@ import java.util.Random;
 
 import butterknife.BindView;
 
-public class CheeseListFragment extends Fragment {
+public class TimetableFragment extends Fragment {
     private BusTimeListViewManager busTimeListViewManager;
     private TimeListCustomAdapter adapter;
     @BindView(R.id.time_list_scrollview)
