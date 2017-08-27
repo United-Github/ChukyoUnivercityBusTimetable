@@ -1,7 +1,6 @@
 package com.support.android.designlibdemo.SearchTimetable;
 
 import android.content.Intent;
-import android.support.design.widget.NavigationView;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -12,21 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
-import com.support.android.designlibdemo.MainActivity;
-import com.support.android.designlibdemo.NavigationSelectedListener;
+import android.view.View;
 import com.support.android.designlibdemo.R;
 import com.support.android.designlibdemo.SimpleTimetableFragment;
-import com.support.android.designlibdemo.TimetableFragment;
-import com.support.android.designlibdemo.TimetableList.layout.BusTimeListViewManager;
-import com.support.android.designlibdemo.TimetableList.layout.OnBusTimeItemClickListener;
 import com.support.android.designlibdemo.TimetableList.model.ScheduleType;
-import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
-import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,16 +97,5 @@ public class SimpleTimeTableListActivity extends AppCompatActivity {
         adapter.addFragment(new SimpleTimetableFragment(), "浄水発");
         adapter.addFragment(new SimpleTimetableFragment(), "大学発");
         viewPager.setAdapter(adapter);
-    }
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-                        mDrawerLayout.closeDrawers();
-                        return true;
-                    }
-                });
     }
 }
