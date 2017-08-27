@@ -35,13 +35,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.support.android.designlibdemo.SearchTimetable.DatePickerManager;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * TODO
  */
-public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity{
 
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
@@ -65,6 +68,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
+        navigationView.setNavigationItemSelectedListener(new NavigationSelectedListener(
+                MainActivity.this,
+                getFragmentManager(),
+                NavigationSelectedListener.ActivityType.MAIN,
+                mDrawerLayout));
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         if (viewPager != null) {
@@ -149,20 +157,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         });
     }
 
-    // Navigationを選択した時の動作
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.nav_timetable:
-                break;
-            case R.id.nav_search:
-                break;
-            case R.id.nav_setting:
-                break;
-        }
-        return false;
-    }
-
     static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
@@ -191,4 +185,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return mFragmentTitles.get(position);
         }
     }
+
 }
