@@ -19,6 +19,8 @@
 
     <string name="time_list_header_depart">%1$2d : %2$2d 発</string>
     <string name="simple_time_table_title_text">%1$2d月 %2$2d日 %3$sダイヤ</string>
-
+    <string name="nav_timetable">時刻表</string>
+    <string name="nav_search">検索</string>
+    <string name="nav_setting">設定</string>
 
 </resources>
