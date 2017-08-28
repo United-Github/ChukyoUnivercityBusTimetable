@@ -38,7 +38,7 @@ public class DatePickerManager {
         Calendar min = Calendar.getInstance();
         min.set(timeManager.YEAR, 3, 1);
         datePickerDialog.setMinDate(min);
-        setDisableDate(timeManager.getDateType(ScheduleType.A));
+        setDisableDate(timeManager.getDateType(ScheduleType.S));
         datePickerDialog.dismissOnPause(true);
     }
     public void show(FragmentManager manager) {

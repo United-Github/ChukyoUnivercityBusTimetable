@@ -1,7 +1,9 @@
 package com.support.android.designlibdemo.TimeManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import com.support.android.designlibdemo.R;
 import com.support.android.designlibdemo.TimetableList.model.ScheduleType;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -33,6 +36,11 @@ public class TimeManager {
     private JSONObject schedule_c;
     private JSONObject schedule_t;
     private JSONObject schedule_ad;
+    private ArrayList<Calendar> suspendedDays;
+    private ArrayList<ScheduleMonth> scheduleYear;
+    private ScheduleDate scheduleA;
+    private ScheduleDate scheduleB;
+
     public static final int DEPART_JOSUI = 0;
     public static final int DEPART_UNIVERCITY = 1;
     private static final String [] DEPART_STRING = new String[]{"J", "T"};
@@ -48,6 +56,11 @@ public class TimeManager {
         }catch(IOException e){
             e.printStackTrace();
         }
+        suspendedDays = getDateType(ScheduleType.S);
+
+    }
+    public ArrayList<Calendar> getSuspendedDays(){
+        return suspendedDays;
     }
 
     public ArrayList<Calendar> getDateType(final ScheduleType _type) {
@@ -274,6 +287,18 @@ public class TimeManager {
     public static class NoScheduleException extends Exception{
         NoScheduleException(){
             super("バススケジュールがありません");
+        }
+    }
+
+    public static class ScheduleMonth{
+        public int month;
+        public ArrayList<ScheduleType> days;
+    }
+    public static class ScheduleDate{
+        ArrayList<TimeItemModel> josui;
+        ArrayList<TimeItemModel> univercity;
+        public ArrayList<TimeItemModel> getTimeItemModels(int type){
+            return (type == DEPART_JOSUI)?josui:univercity;
         }
     }
 
