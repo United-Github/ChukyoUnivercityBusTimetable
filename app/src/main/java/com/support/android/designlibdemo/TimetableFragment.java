@@ -35,6 +35,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.support.android.designlibdemo.TimeManager.TimeManager;
 import com.support.android.designlibdemo.TimetableList.layout.BusTimeListViewManager;
 import com.support.android.designlibdemo.TimetableList.layout.OnBusTimeItemClickListener;
 import com.support.android.designlibdemo.TimetableList.layout.TimeListCustomAdapter;
@@ -42,6 +43,7 @@ import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
 import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -51,6 +53,7 @@ public class TimetableFragment extends Fragment {
     private BusTimeListViewManager busTimeListViewManager;
     private TimeListCustomAdapter adapter;
     private final boolean isDepartJosui;
+    private TimeManager timeManager;
     public TimetableFragment(boolean isDepartJosui){
         super();
         this.isDepartJosui = isDepartJosui;
@@ -63,20 +66,23 @@ public class TimetableFragment extends Fragment {
         View rv = inflater.inflate(R.layout.fragment_cheese_list, container, false);
         busTimeListViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list_scrollview));
         adapter = new TimeListCustomAdapter(getContext());
+        timeManager = ((BusTimerApplication)getActivity().getApplication()).getInstanceTimeManager();
         setTestData();
         return rv;
     }
 
-    private List<String> getRandomSublist(String[] array, int amount) {
-        ArrayList<String> list = new ArrayList<>(amount);
-        Random random = new Random();
-        while (list.size() < amount) {
-            list.add(array[random.nextInt(array.length)]);
-        }
-        return list;
-    }
 
     private void setTestData(){
-
+        Calendar calendar = Calendar.getInstance();
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int date = calendar.get(Calendar.DATE);
+        try {
+            List<TimeItemModel> itemModels = timeManager.getBusSchedule(month, date, TimeManager.DEPART_JOSUI);
+            for (final TimeItemModel item : itemModels){
+                busTimeListViewManager.addTimeItemModel(item);
+            }
+        } catch (TimeManager.NoScheduleException e) {
+            e.printStackTrace();
+        }
     }
 }

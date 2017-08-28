@@ -20,23 +20,7 @@ import java.util.List;
  */
 
 
-class DayOverflowException extends Exception{
-    DayOverflowException(){
-        super("これ以上はありません");
-    }
-}
 
-class DayUnderflowException extends Exception{
-    DayUnderflowException(){
-        super("これ以下はありません");
-    }
-}
-
-class NoScheduleException extends Exception{
-    NoScheduleException(){
-        super("バススケジュールがありません");
-    }
-}
 
 public class TimeManager {
     private Context context;
@@ -46,8 +30,11 @@ public class TimeManager {
     private JSONObject schedule_c;
     private JSONObject schedule_t;
     private JSONObject schedule_ad;
+    public static final int DEPART_JOSUI = 0;
+    public static final int DEPART_UNIVERCITY = 1;
+    private static final String [] DEPART_STRING = new String[]{"J", "T"};
 
-    TimeManager(Context _context){
+    public TimeManager(Context _context){
         context=_context;
         try{
             parseJson();
@@ -110,15 +97,16 @@ public class TimeManager {
     }
 
 
-    public List<TimeItemModel> getBusSchedule(int _month, int _day, String _from) throws NoScheduleException{
+    public List<TimeItemModel> getBusSchedule(final int _month, final int _day, final int depart) throws NoScheduleException{
+        final String departString = DEPART_STRING[depart];
         List<TimeItemModel> timeList=new ArrayList<TimeItemModel>();
         try{
             JSONObject schedule_temp=classifySchedule(_month,_day);
-            for(int i=8;schedule_temp.getJSONObject(_from).getJSONArray(String.valueOf(i))!=null;++i) {
+            for(int i=8;schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i))!=null;++i) {
                 TimeItemModel time_temp=new TimeItemModel();
-                for(int j=0;j<schedule_temp.getJSONObject(_from).getJSONArray(String.valueOf(i)).length();j++)
+                for(int j=0;j<schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i)).length();j++)
                 {
-                    time_temp.minutesList.add(new TimeMinutesListItemModel(schedule_temp.getJSONObject(_from).getJSONArray(String.valueOf(i)).getInt(j),false));
+                    time_temp.minutesList.add(new TimeMinutesListItemModel(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i)).getInt(j),false));
                 }
                 timeList.add(time_temp);
             }
@@ -235,6 +223,23 @@ public class TimeManager {
         }
         int[] hAndM={loHou,loMin};
         return hAndM;
+    }
+    public static class DayOverflowException extends Exception{
+        DayOverflowException(){
+            super("これ以上はありません");
+        }
+    }
+
+    public static class DayUnderflowException extends Exception{
+        DayUnderflowException(){
+            super("これ以下はありません");
+        }
+    }
+
+    public static class NoScheduleException extends Exception{
+        NoScheduleException(){
+            super("バススケジュールがありません");
+        }
     }
 
 }

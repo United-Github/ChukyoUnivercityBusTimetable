@@ -21,15 +21,15 @@ public class TimeManagerTestActivity extends AppCompatActivity {
             int[] nt = timeManager.nearBusTime(4, 1, 8, 53, "J");
             int[] bt = timeManager.beforeBusTime(4, 1, 9, 1, "J");
             int[] at = timeManager.afterBusTime(4, 1, 8, 53, "J");
-            List<TimeItemModel> bs = timeManager.getBusSchedule(4, 1, "J");
+            List<TimeItemModel> bs = timeManager.getBusSchedule(4, 1, TimeManager.DEPART_JOSUI);
             String[] ms = timeManager.getMonthSchedule(4);
             TextView testText=(TextView)findViewById(R.id.ttmt);
             testText.setText(nt[0]+" "+nt[1]+"+"+bt[0]+" "+bt[1]+"+"+at[0]+" "+at[1]+"\n+"+bs.get(0).minutesList.get(0).minutes+"+"+ms[0]);
-        }catch(DayOverflowException e){
+        }catch(TimeManager.DayOverflowException e){
             e.printStackTrace();
-        }catch (NoScheduleException e){
+        }catch (TimeManager.NoScheduleException e){
             e.printStackTrace();
-        }catch (DayUnderflowException e){
+        }catch (TimeManager.DayUnderflowException e){
             e.printStackTrace();
         }
 
