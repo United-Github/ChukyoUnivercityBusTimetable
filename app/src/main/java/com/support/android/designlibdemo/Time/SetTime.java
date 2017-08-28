@@ -31,19 +31,14 @@ public class SetTime extends AppCompatActivity {
 
         textView = (TextView)findViewById(R.id.text_view);
         // 協定世界時 (UTC)です適宜設定してください
-        year = 2017;
-        month = 7;// 4=>5月
-        date = 22;
-        hour = 12;
-        minute = 57;
-        second = 30;
-        msecond = 0;
+       setData();
 
         // 日時を指定したアラーム
         button3 = (Button)this.findViewById(R.id.button3);
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Calendar calendar2 = Calendar.getInstance();
                 // 過去の時間は即実行されます
                 calendar2.set(Calendar.YEAR, year);
@@ -71,5 +66,17 @@ public class SetTime extends AppCompatActivity {
 
     private void close(){
         finish();
+    }
+    private void setData(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        year = 2017;
+        month = 7;// 4=>5月
+        date = 22;
+        hour = 12;
+        minute = 57;
+        second = 0;
+        msecond = 0;
+//ローカルプッシュして停止できるようにする
     }
 }
