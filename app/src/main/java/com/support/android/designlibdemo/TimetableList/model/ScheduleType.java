@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 public enum  ScheduleType {
-    A("A"),B("B"),C("C"),Ad("A'"),Td("T'");
+    A("A"),B("B"),C("C"),Ad("Ad"),T("T"), S("S");
     private final String typeName;
     ScheduleType(String string){
         typeName = string;
@@ -16,7 +16,7 @@ public enum  ScheduleType {
     public String  toString(){
         return typeName;
     }
-    public ScheduleType getScheduleTypeByString(String string) {
+    public ScheduleType getScheduleTypeByString(String string) throws IllegalArgumentException{
         switch (string){
             case "A":
                 return A;
@@ -24,12 +24,14 @@ public enum  ScheduleType {
                 return B;
             case "C":
                 return C;
-            case "A'":
+            case "Ad":
                 return Ad;
-            case "T'":
-                return Td;
+            case "T":
+                return T;
+            case "S":
+                return S;
             default:
-                return null;
+                throw  new IllegalArgumentException();
         }
     }
 }
