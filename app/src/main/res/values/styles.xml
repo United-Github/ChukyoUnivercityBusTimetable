@@ -33,9 +33,17 @@
         <item name="android:paddingBottom">24dp</item>
         <item name="android:orientation">vertical</item>
     </style>
-    <style name="MyButton" parent="Theme.AppCompat.Light">
-        <item name="colorControlHighlight">#FF4081</item>
+    <style name="MyButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorControlHighlight">#FFFF</item>
         <item name="android:shape">oval</item>
+    </style>
+
+    <style name="TimeListTextStyle">
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">#FFFF</item>
+        <item name="android:textColorSecondary">#FFFF</item>
     </style>
 
 </resources>

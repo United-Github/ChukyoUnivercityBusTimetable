@@ -20,9 +20,9 @@
     android:layout_height="match_parent">
 
     <include layout="@layout/bustime_list_header"/>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <include layout="@layout/time_list_scrollview" />
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/recyclerview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 </LinearLayout>

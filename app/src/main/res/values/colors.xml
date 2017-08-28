@@ -17,4 +17,10 @@
 
 <resources>
     <color name="window_background">#FFF5F5F5</color>
+    <color name="colorBusTimeListItemBackgroundHighLight">#FCE4EC</color>
+    <color name="colorBusTimeListItemBackGroundNormal">#FFFFFF</color>
+    <color name="colorBusTimeKaizuText">#43A047</color>
+    <color name="colorBusTimeRemainingTime">#E57373</color>
+    <color name="colorBusTimeMinutesTextEnable">#424242</color>
+    <color name="colorBusTimeMinutesTextDisable">#BDBDBD</color>
 </resources>
