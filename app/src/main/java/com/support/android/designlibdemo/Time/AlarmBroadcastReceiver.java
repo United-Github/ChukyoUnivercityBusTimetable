@@ -13,7 +13,6 @@ import android.util.Log;
 public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
     Context context;
-    public static final String DELETE_NOTIFICATION = "delete_notification";
     @Override   // データを受信した
     public void onReceive(Context context, Intent intent) {
         this.context = context;

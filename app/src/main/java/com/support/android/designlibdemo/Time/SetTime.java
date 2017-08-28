@@ -31,31 +31,17 @@ public class SetTime extends AppCompatActivity {
 
         textView = (TextView)findViewById(R.id.text_view);
         // 協定世界時 (UTC)です適宜設定してください
-       setData();
+
 
         // 日時を指定したアラーム
         button3 = (Button)this.findViewById(R.id.button3);
         button3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                setData();
+                TimeSet time= new TimeSet(getApplicationContext(),month,date,hour,minute);
+                time.Alart();
 
-                Calendar calendar2 = Calendar.getInstance();
-                // 過去の時間は即実行されます
-                calendar2.set(Calendar.YEAR, year);
-                calendar2.set(Calendar.MONTH, month);
-                calendar2.set(Calendar.DATE, date);
-                calendar2.set(Calendar.HOUR_OF_DAY, hour);
-                calendar2.set(Calendar.MINUTE, minute );
-                calendar2.set(Calendar.SECOND, second);
-                calendar2.set(Calendar.MILLISECOND, msecond);
-
-                Intent intent = new Intent(getApplicationContext(), AlarmBroadcastReceiver.class);
-                intent.putExtra("intentId", 2);
-                PendingIntent pending = PendingIntent.getBroadcast(getApplicationContext(), bid2, intent, 0);
-
-                // アラームをセットする
-                AlarmManager am = (AlarmManager)SetTime.this.getSystemService(ALARM_SERVICE);
-                am.set(AlarmManager.RTC_WAKEUP, calendar2.getTimeInMillis(), pending);
                 Toast.makeText(getApplicationContext(), "ALARM 2", Toast.LENGTH_SHORT).show();
 
                 String setTime = "設定時間(UTC)："+year+"/"+(month+1)+"/"+date+" "+hour+":"+minute+":"+second+"."+msecond;
@@ -69,14 +55,14 @@ public class SetTime extends AppCompatActivity {
     }
     private void setData(){
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        year = 2017;
-        month = 7;// 4=>5月
-        date = 22;
-        hour = 12;
-        minute = 57;
-        second = 0;
-        msecond = 0;
+        calendar.setTimeInMillis(calendar.getTimeInMillis());
+        year=calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);// 4=>5月
+        date = calendar.get(Calendar.DAY_OF_MONTH);
+        hour = calendar.get(Calendar.HOUR);
+        minute = calendar.get(Calendar.MINUTE);
+        second = calendar.get(Calendar.SECOND)+3;
+        msecond = calendar.get(Calendar.MILLISECOND);
 //ローカルプッシュして停止できるようにする
     }
 }

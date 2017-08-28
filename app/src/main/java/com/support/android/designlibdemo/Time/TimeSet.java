@@ -32,6 +32,7 @@ public class TimeSet {
         private AlarmManager am;
         private AlarmManager am2;
         private PendingIntent pending;
+        private PendingIntent pendingIntent;
 
     TimeSet(Context context ,int month, int date, int hour, int minute){
             Calendar calendar = Calendar.getInstance();
@@ -43,12 +44,14 @@ public class TimeSet {
             this.minute = minute;
             second = 0;
             msecond = 0;
-           mcontext = context;
+            mcontext = context;
+
         }
     TimeSet(){
 
     }
         public void Alart(){
+
             //設定時につけるアラーム
 //            Calendar calendar = Calendar.getInstance();
 //            calendar.setTimeInMillis(System.currentTimeMillis());
@@ -59,6 +62,8 @@ public class TimeSet {
 //
 //            am2 = (AlarmManager)this.mcontext.getSystemService(ALARM_SERVICE);
 //            am2.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending2);
+            final String TAG ="test";
+            Log.i("test","Alart:"+year);
             FirstAlarm();
 
             //ここから本来のアラーム
@@ -79,12 +84,14 @@ public class TimeSet {
             // アラームをセットする
             am = (AlarmManager)this.mcontext.getSystemService(ALARM_SERVICE);
             am.set(AlarmManager.RTC_WAKEUP, calendar2.getTimeInMillis(), pending);
+            Log.d("test","testtest");
         }
+
         public void FirstAlarm(){
             Log.d("AlarmBroadcastReceiver","onReceive() pid=" + android.os.Process.myPid());
-            Intent intent2 = new Intent(mcontext,SetTime.class);
-            PendingIntent pendingIntent =
-                    PendingIntent.getActivity(mcontext, bid1, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent intent = new Intent(mcontext,SetTime.class);
+            pendingIntent =
+                    PendingIntent.getActivity(mcontext, bid1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationManager notificationManager =
                     (NotificationManager)mcontext.getSystemService(Context.NOTIFICATION_SERVICE);
             Notification notification = new NotificationCompat.Builder(mcontext)
@@ -103,10 +110,12 @@ public class TimeSet {
             notificationManager.cancelAll();
             notificationManager.notify(R.string.app_name, notification);
         }
+
         private PendingIntent getPendingIntentWithBroadcast(String action) {
             return PendingIntent.getBroadcast(mcontext, 0 , new Intent(action), 0);
         }
         public void ClearAlarm(){
             am.cancel(pending);
+            Log.d("test", "ClearAlarm: ");
         }
     }
