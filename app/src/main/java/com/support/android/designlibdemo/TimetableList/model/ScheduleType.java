@@ -1,20 +1,20 @@
 package com.support.android.designlibdemo.TimetableList.model;
 
-import java.util.concurrent.ExecutionException;
-
 /**
  * Created by ragro on 2017/08/22.
  */
 
 public enum  ScheduleType {
-    A("A"),B("B"),C("C"),Ad("Ad"),T("T"), S("S");
-    private final String typeName;
-    ScheduleType(String string){
-        typeName = string;
+    A("A", "A"),B("B", "B"),C("C", "C"),Ad("Ad", "A'"),T("T", "臨時"), S("S", "運休日");
+    private final String identifier;
+    private final String name;
+    ScheduleType(String identifier, String name){
+        this.identifier = identifier;
+        this.name = name;
     }
     @Override
     public String  toString(){
-        return typeName;
+        return identifier;
     }
     public ScheduleType getScheduleTypeByString(String string) throws IllegalArgumentException{
         switch (string){
@@ -33,5 +33,8 @@ public enum  ScheduleType {
             default:
                 throw  new IllegalArgumentException();
         }
+    }
+    public String getName(ScheduleType type){
+        return type.name;
     }
 }
