@@ -41,5 +41,9 @@
     <style name="TimeListTextStyle">
         <item name="android:textSize">20sp</item>
     </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:textColorPrimary">#FFFF</item>
+        <item name="android:textColorSecondary">#FFFF</item>
+    </style>
 
 </resources>
