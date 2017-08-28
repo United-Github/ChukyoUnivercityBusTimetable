@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2015 The Android Open Source Project
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,18 +17,18 @@
 <resources>
     <string name="app_name">BusTimer</string>
 
-  <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
+    <string name="cheese_ipsum">Jarlsberg lancashire edam. Dolcelatte hard cheese brie st. agur blue
     cheese caerphilly bavarian bergkase cheese and biscuits mascarpone. Cheeseburger swiss bavarian
     bergkase cream cheese fromage frais cheesy feet port-salut airedale. St. agur blue cheese rubber
     cheese caerphilly cheddar cheesecake cream cheese manchego lancashire. Roquefort squirty cheese
     the big cheese.</string>
-  <string name="checkin">Checkin</string>
+    <string name="checkin">Checkin</string>
 
-  <string name="menu_night_mode">Night mode</string>
-  <string name="menu_night_mode_system">Follow system</string>
-  <string name="menu_night_mode_day">Day (always)</string>
-  <string name="menu_night_mode_night">Night (always)</string>
-  <string name="menu_night_mode_auto">Auto</string>
+    <string name="menu_night_mode">Night mode</string>
+    <string name="menu_night_mode_system">Follow system</string>
+    <string name="menu_night_mode_day">Day (always)</string>
+    <string name="menu_night_mode_night">Night (always)</string>
+    <string name="menu_night_mode_auto">Auto</string>
     <string name="time_list_header_depart">%1$d : %2$d 発</string>
 
 </resources>
