@@ -18,9 +18,9 @@ public class TimeManagerTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_time_manager_test);
         TimeManager timeManager=new TimeManager(TimeManagerTestActivity.this);
         try {
-            int[] nt = timeManager.nearBusTime(4, 1, 8, 53, "J");
-            int[] bt = timeManager.beforeBusTime(4, 1, 9, 1, "J");
-            int[] at = timeManager.afterBusTime(4, 1, 8, 53, "J");
+            int[] nt = timeManager.nearBusTime(4, 1, 8, 53, TimeManager.DEPART_JOSUI);
+            int[] bt = timeManager.beforeBusTime(4, 1, 9, 1, TimeManager.DEPART_JOSUI);
+            int[] at = timeManager.afterBusTime(4, 1, 8, 53, TimeManager.DEPART_JOSUI);
             List<TimeItemModel> bs = timeManager.getBusSchedule(4, 1, TimeManager.DEPART_JOSUI);
             String[] ms = timeManager.getMonthSchedule(4);
             TextView testText=(TextView)findViewById(R.id.ttmt);
