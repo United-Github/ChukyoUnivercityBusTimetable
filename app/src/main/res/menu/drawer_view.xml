@@ -20,23 +20,15 @@
         <item
             android:id="@+id/nav_timetable"
             android:icon="@drawable/ic_dashboard"
-            android:title="時刻表" />
+            android:title="@string/nav_timetable" />
         <item
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_event"
-            android:title="時刻表検索" />
+            android:title="@string/nav_search" />
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_headset"
-            android:title="設定" />
+            android:title="@string/nav_setting" />
     </group>
-
-    <!--<item android:title="About">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:icon="@drawable/ic_dashboard"-->
-                <!--android:title="製作者" />-->
-        <!--</menu>-->
-    <!--</item>-->
 
 </menu>
