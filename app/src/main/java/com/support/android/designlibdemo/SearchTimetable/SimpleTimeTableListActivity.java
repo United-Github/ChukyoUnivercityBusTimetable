@@ -94,8 +94,8 @@ public class SimpleTimeTableListActivity extends AppCompatActivity {
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new SimpleTimetableFragment(), "浄水発");
-        adapter.addFragment(new SimpleTimetableFragment(), "大学発");
+        adapter.addFragment(new SimpleTimetableFragment(true), "浄水発");
+        adapter.addFragment(new SimpleTimetableFragment(false), "大学発");
         viewPager.setAdapter(adapter);
     }
 }

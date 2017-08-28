@@ -16,6 +16,7 @@
 
 package com.support.android.designlibdemo;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,10 +46,15 @@ import java.util.List;
 import java.util.Random;
 
 import butterknife.BindView;
-
+@SuppressLint("ValidFragment")
 public class TimetableFragment extends Fragment {
     private BusTimeListViewManager busTimeListViewManager;
     private TimeListCustomAdapter adapter;
+    private final boolean isDepartJosui;
+    public TimetableFragment(boolean isDepartJosui){
+        super();
+        this.isDepartJosui = isDepartJosui;
+    }
     @BindView(R.id.time_list_scrollview)
     ScrollView scrollView;
     @Nullable
@@ -71,52 +77,6 @@ public class TimetableFragment extends Fragment {
     }
 
     private void setTestData(){
-        TimeItemModel timeItemModel = new TimeItemModel();
-        timeItemModel.hour = 1;
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
-        busTimeListViewManager.addTimeItemModel(timeItemModel);
-        timeItemModel = new TimeItemModel();
-        timeItemModel.hour = 2;
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
-        busTimeListViewManager.addTimeItemModel(timeItemModel);
-        timeItemModel = new TimeItemModel();
-        timeItemModel.hour = 3;
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
-        busTimeListViewManager.addTimeItemModel(timeItemModel);
-        timeItemModel = new TimeItemModel();
-        timeItemModel.hour = 4;
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
-        busTimeListViewManager.addTimeItemModel(timeItemModel);
-        timeItemModel = new TimeItemModel();
-        timeItemModel.hour = 5;
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(1, true));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(10, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(20, false));
-        timeItemModel.minutesList.add(new TimeMinutesListItemModel(39, false));
-        busTimeListViewManager.addTimeItemModel(timeItemModel);
-        busTimeListViewManager.setRemainingTime(1, 1, 5);
-        busTimeListViewManager.setRemainingTime(1, 10, 10);
-        busTimeListViewManager.setRemainingTime(1, 20, 2);
-        busTimeListViewManager.clearRemainingTime(1, 20);
-        busTimeListViewManager.setBusTimeClickListener(new OnBusTimeItemClickListener() {
-            @Override
-            public void onItemClick(int hour, int minutes) {
-                Log.d("hoge", Integer.toString(hour) + " : " + Integer.toString(minutes));
-            }
-        });
-        busTimeListViewManager.setUntilDisable(2, 20);
-        busTimeListViewManager.setCurrentTime(3, 20);
+
     }
 }

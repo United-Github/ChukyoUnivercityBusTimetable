@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity{
 
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new TimetableFragment(), "浄水発");
-        adapter.addFragment(new TimetableFragment(), "大学発");
+        adapter.addFragment(new TimetableFragment(true), "浄水発");
+        adapter.addFragment(new TimetableFragment(false), "大学発");
         viewPager.setAdapter(adapter);
     }
 

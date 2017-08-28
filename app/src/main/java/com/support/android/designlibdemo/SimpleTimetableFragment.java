@@ -1,5 +1,6 @@
 package com.support.android.designlibdemo;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,10 +24,15 @@ import java.util.Random;
 
 import butterknife.BindView;
 
-
+@SuppressLint("ValidFragment")
 public class SimpleTimetableFragment extends Fragment {
     private BusTimeListViewManager busTimeListViewManager;
     private TimeListCustomAdapter adapter;
+    private final boolean isDepartJosui;
+    public SimpleTimetableFragment(boolean isDepartJosui){
+        this.isDepartJosui = isDepartJosui;
+    }
+
     @BindView(R.id.time_list_scrollview)
     ScrollView scrollView;
     @Nullable
