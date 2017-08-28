@@ -1,6 +1,7 @@
 package com.support.android.designlibdemo.TimeManager;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.support.android.designlibdemo.R;
 import com.support.android.designlibdemo.TimetableList.model.ScheduleType;
@@ -53,11 +54,18 @@ public class TimeManager {
         ArrayList<Calendar> calender=new ArrayList<Calendar>();
         try{
             for(int month = 1; month<=12; month++) {
-                for (int date = 1; jsonMonth.getJSONObject(String.valueOf(month)).getString(String.valueOf(date)) != null; date++) {
-                    if(_type.toString().equals(jsonMonth.getJSONObject(String.valueOf(month)).getString(String.valueOf(date)))){
-                        Calendar calender_temp=Calendar.getInstance();
-                        calender_temp.set(YEAR,month-1,date);
-                        calender.add(calender_temp);
+                JSONObject monthData = jsonMonth.getJSONObject(String.valueOf(month));
+                for (int date = 1; true; date++) {
+                    try{
+                        String dateText = monthData.getString(String.valueOf(date));
+                        if((_type.toString()).equals(dateText)){
+                            Calendar calender_temp=Calendar.getInstance();
+                            int year = (month <= 3)? YEAR + 1: YEAR;
+                            calender_temp.set(year,month-1,date);
+                            calender.add(calender_temp);
+                        }
+                    }catch (JSONException e){
+                        break;
                     }
                 }
             }
