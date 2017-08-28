@@ -42,6 +42,7 @@ import com.support.android.designlibdemo.TimetableList.layout.TimeListCustomAdap
 import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
 import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,10 +54,12 @@ public class TimetableFragment extends Fragment {
     private BusTimeListViewManager busTimeListViewManager;
     private TimeListCustomAdapter adapter;
     private final boolean isDepartJosui;
+    private final int depart;
     private TimeManager timeManager;
     public TimetableFragment(boolean isDepartJosui){
         super();
         this.isDepartJosui = isDepartJosui;
+        this.depart = (isDepartJosui)? TimeManager.DEPART_JOSUI : TimeManager.DEPART_UNIVERCITY;
     }
     @BindView(R.id.time_list_scrollview)
     ScrollView scrollView;
@@ -77,7 +80,7 @@ public class TimetableFragment extends Fragment {
         int month = calendar.get(Calendar.MONTH) + 1;
         int date = calendar.get(Calendar.DATE);
         try {
-            List<TimeItemModel> itemModels = timeManager.getBusSchedule(month, date, TimeManager.DEPART_JOSUI);
+            List<TimeItemModel> itemModels = timeManager.getBusSchedule(month, date, depart);
             for (final TimeItemModel item : itemModels){
                 busTimeListViewManager.addTimeItemModel(item);
             }
