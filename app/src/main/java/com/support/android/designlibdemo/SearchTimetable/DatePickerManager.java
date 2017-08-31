@@ -1,6 +1,9 @@
 package com.support.android.designlibdemo.SearchTimetable;
 
+import com.support.android.designlibdemo.BusTimerApplication;
 import com.support.android.designlibdemo.MainActivity;
+import com.support.android.designlibdemo.TimeManager.TimeManager;
+import com.support.android.designlibdemo.TimetableList.model.ScheduleType;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import android.app.FragmentManager;
@@ -18,21 +21,24 @@ import java.util.Calendar;
 public class DatePickerManager {
     private DatePickerDialog datePickerDialog;
     private Context mContext;
+    private TimeManager timeManager;
 
     public DatePickerManager(Context context){
         Calendar now = Calendar.getInstance();
         mContext = context;
+        timeManager = ((BusTimerApplication)mContext.getApplicationContext()).getInstanceTimeManager();
         datePickerDialog = DatePickerDialog.newInstance(
                 new SelectOK(),
                 now.get(Calendar.YEAR),
                 now.get(Calendar.MONTH),
                 now.get(Calendar.DATE));
         Calendar max = Calendar.getInstance();
-        max.set(2017, 11, 31);
+        max.set(timeManager.YEAR + 1, 2, 31);
         datePickerDialog.setMaxDate(max);
         Calendar min = Calendar.getInstance();
-        min.set(2017, 0, 1);
+        min.set(timeManager.YEAR, 3, 1);
         datePickerDialog.setMinDate(min);
+        setDisableDate(timeManager.getDateType(ScheduleType.S));
         datePickerDialog.dismissOnPause(true);
     }
     public void show(FragmentManager manager) {
