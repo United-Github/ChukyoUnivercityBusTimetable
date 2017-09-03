@@ -22,5 +22,8 @@
     <string name="nav_timetable">時刻表</string>
     <string name="nav_search">検索</string>
     <string name="nav_setting">設定</string>
+    <string name="time_list_header_time">%1$2d</string>
+    <string name="time_list_header_finished">本日の運行は終了しました</string>
+    <string name="bus_time_suspended">本日は運休です</string>
 
 </resources>
