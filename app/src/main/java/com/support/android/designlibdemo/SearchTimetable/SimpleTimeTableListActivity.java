@@ -57,7 +57,7 @@ public class SimpleTimeTableListActivity extends AppCompatActivity {
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         if (viewPager != null) {
-            setupViewPager(viewPager);
+            setupViewPager(viewPager, month, day);
         }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -92,10 +92,10 @@ public class SimpleTimeTableListActivity extends AppCompatActivity {
         }
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, final int month, final int day) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new SimpleTimetableFragment(true), "浄水発");
-        adapter.addFragment(new SimpleTimetableFragment(false), "大学発");
+        adapter.addFragment(new SimpleTimetableFragment(month, day, true), "浄水発");
+        adapter.addFragment(new SimpleTimetableFragment(month, day, false), "大学発");
         viewPager.setAdapter(adapter);
     }
 }
