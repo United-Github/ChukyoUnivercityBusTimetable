@@ -1,6 +1,7 @@
 package com.support.android.designlibdemo.TimetableList.layout;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import butterknife.ButterKnife;
  */
 
 public class TimeListMinutesCustomAdapter extends BaseAdapter {
-    private List<TimeMinutesItemView> mList;
+    private List<TimeMinutesItem> mList;
     private LayoutInflater mInflater;
     private Context mContext;
     private int colorNormalBackground;
@@ -34,8 +35,7 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
         mInflater = LayoutInflater.from(context);
         mContext = context;
 
-        colorNormalBackground = ContextCompat.getColor(mContext, R.color.colorBusTimeListItemBackGroundNormal);
-        colorNormalBackground = ContextCompat.getColor(mContext, R.color.colorBusTimeListItemBackgroundHighLight);
+
     }
     @Override
     public int getCount() {
@@ -44,7 +44,7 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return mList.get(i);
     }
 
     @Override
@@ -63,46 +63,40 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
         }
     }
     private void add(TimeMinutesListItemModel item){
-        TimeMinutesItemView listView = new TimeMinutesItemView(mContext);
-        listView.timeMinutesListItemModel = item;
-        mList.add(listView);
+        TimeMinutesItem timeMinutesItem = new TimeMinutesItem(mContext);
+        timeMinutesItem.timeMinutesListItemModel = item;
+        mList.add(timeMinutesItem);
         notifyDataSetChanged();
     }
     // 残り時間の表示を変更する
     public void setRemainingTime(int minutes, int remainingTime){
-        for (TimeMinutesItemView item : mList) {
+        for (TimeMinutesItem item : mList) {
             if (item.timeMinutesListItemModel.minutes == minutes){
                 item.remainingTime = remainingTime;
-                if (item.holder != null){
-                    item.holder.minutesText.setText(Integer.toString(minutes));
-                }
             }
         }
     }
     // 残り時間の表示を無くす
     public void clearRemainingTime(int minutes){
-        for (TimeMinutesItemView item : mList) {
+        for (TimeMinutesItem item : mList) {
             if (item.timeMinutesListItemModel.minutes == minutes){
                 item.remainingTime = 0;
-                if (item.holder != null) {
-                    item.holder.minutesText.setText("");
-                }
             }
         }
     }
     // ハイライトにする
     public void setHightLight(int minutes){
-        for (TimeMinutesItemView item: mList ) {
+        for (TimeMinutesItem item: mList ) {
             if (item.timeMinutesListItemModel.minutes == minutes){
-                item.setBackgroundColor(true);
+                item.isHighLight = true;
             }
         }
     }
     // ハイライトを消す
     public void clearHightLight(int minutes){
-        for (TimeMinutesItemView item: mList ) {
+        for (TimeMinutesItem item: mList ) {
             if (item.timeMinutesListItemModel.minutes == minutes){
-                item.setBackgroundColor(false);
+                item.isHighLight = false;
             }
         }
     }
@@ -112,40 +106,41 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup parent) {
-        TimeMinutesItemView itemView;
-        if (view != null) {
-            itemView = (TimeMinutesItemView) view.getTag();
-        } else {
-            itemView = mList.get(i);
+        ViewHolder viewHolder = null;
+        if (view == null) {
             view = mInflater.inflate(R.layout.time_list_minutes, parent, false);
-            itemView.holder = new ViewHolder(view);
-            view.setTag(itemView);
+            viewHolder = new ViewHolder(view);
+            view.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder)view.getTag();
         }
-        itemView.setDataToView();
+        TimeMinutesItem timeMinutesItem = (TimeMinutesItem)this.getItem(i);
+        viewHolder.update(timeMinutesItem);
         return view;
     }
-    public int getViewY(int minutes) {
-        for (TimeMinutesItemView item: mList ) {
-            if (item.timeMinutesListItemModel.minutes == minutes && item.holder != null){
-                Log.d("hoge", Integer.toString(item.holder.linearLayout.getTop()));
-                return item.holder.linearLayout.getTop();
-            }
-        }
-        return -1;
-    }
+
+//    public int getViewY(int minutes) {
+//        for (TimeMinutesItem item: mList ) {
+//            if (item.timeMinutesListItemModel.minutes == minutes && item.holder != null){
+//                Log.d("hoge", Integer.toString(item.holder.linearLayout.getTop()));
+//                return item.holder.linearLayout.getTop();
+//            }
+//        }
+//        return -1;
+//    }
 
     // 全ての有効、無効を変更
     public void setAllState(boolean enabled){
-        for (TimeMinutesItemView item : mList) {
-            item.setState(enabled);
+        for (TimeMinutesItem item : mList) {
+            item.enabled = enabled;
         }
     }
 
     // 指定した分まで無効化
     public void setUntilState(int minutes, boolean enabled){
-        for (TimeMinutesItemView item : mList){
+        for (TimeMinutesItem item : mList){
             if (item.timeMinutesListItemModel.minutes <= minutes){
-                item.setState(enabled);
+                item.enabled = enabled;
             }
         }
     }
@@ -159,71 +154,63 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
         TextView remainingTime;
         @BindView(R.id.time_list_minutes_item)
         LinearLayout linearLayout;
+
+        private final int enableTextColor;
+        private final int disableTextColor;
+        private final int colorNormalBackground;
+        private final int colorHighLightBackground;
+
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);
+            final Context context = view.getContext();
+            enableTextColor = ContextCompat.getColor(context, R.color.colorBusTimeMinutesTextEnable);
+            disableTextColor = ContextCompat.getColor(context, R.color.colorBusTimeMinutesTextDisable);
+            colorNormalBackground = ContextCompat.getColor(context, R.color.colorBusTimeListItemBackGroundNormal);
+            colorHighLightBackground = ContextCompat.getColor(context, R.color.colorBusTimeListItemBackgroundHighLight);
+        }
+
+        public void update(final TimeMinutesItem timeMinutesItem){
+            final TimeMinutesListItemModel timeMinutesListItemModel = timeMinutesItem.timeMinutesListItemModel;
+            if (timeMinutesListItemModel.viaKaizu) {
+                kaizuText.setText("海津経由");
+            }
+
+            minutesText.setText(Integer.toString(timeMinutesListItemModel.minutes));
+
+            if (timeMinutesItem.remainingTime == 0) {
+                remainingTime.setText("");
+            } else {
+                remainingTime.setText(Integer.toString(timeMinutesItem.remainingTime));
+            }
+
+            if (timeMinutesItem.isHighLight) {
+                linearLayout.setBackgroundColor(colorHighLightBackground);
+
+            } else {
+                linearLayout.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            if (timeMinutesItem.enabled){
+                minutesText.setTextColor(enableTextColor);
+            }else {
+                minutesText.setTextColor(disableTextColor);
+            }
         }
     }
-    private class TimeMinutesItemView {
-        ViewHolder holder;
+    private class TimeMinutesItem {
         TimeMinutesListItemModel timeMinutesListItemModel;
         private int hour;
-        private boolean isHighLight;
-        private boolean enabled;
+        public boolean isHighLight;
+        public boolean enabled;
         private int remainingTime;
-        private int enableTextColor;
-        private int disableTextColor;
         private OnBusTimeItemClickListener listener;
-        public TimeMinutesItemView(Context context){
+        public TimeMinutesItem(Context context){
             isHighLight = false;
             enabled = true;
             remainingTime = 0;
-            enableTextColor = ContextCompat.getColor(context, R.color.colorBusTimeMinutesTextEnable);
-            disableTextColor = ContextCompat.getColor(context, R.color.colorBusTimeMinutesTextDisable);
         }
         private void setClickListener(OnBusTimeItemClickListener listener){
             this.listener = listener;
-        }
-        private void setDataToView() {
-            if (timeMinutesListItemModel.viaKaizu) {
-                holder.kaizuText.setText("海津経由");
-            }
-
-            holder.minutesText.setText(Integer.toString(timeMinutesListItemModel.minutes));
-
-            if (remainingTime == 0) {
-                holder.remainingTime.setText("");
-            } else {
-                holder.remainingTime.setText(Integer.toString(remainingTime));
-            }
-            setBackgroundColor(isHighLight);
-            if (enabled){
-                holder.minutesText.setTextColor(enableTextColor);
-            }else {
-                holder.minutesText.setTextColor(disableTextColor);
-            }
-        }
-        private void setBackgroundColor(boolean isHighLight){
-            this.isHighLight = isHighLight;
-
-            if (holder == null){
-                return;
-            }
-
-            if (isHighLight) {
-                holder.linearLayout.setBackgroundColor(colorNormalBackground);
-            } else {
-                holder.linearLayout.setBackgroundColor(colorHighLightBackground);
-            }
-        }
-        public void setState(boolean enabled){
-            this.enabled = enabled;
-            if (holder != null){
-                if (enabled){
-                    holder.minutesText.setTextColor(enableTextColor);
-                }else {
-                    holder.minutesText.setTextColor(disableTextColor);
-                }
-            }
         }
     }
 }

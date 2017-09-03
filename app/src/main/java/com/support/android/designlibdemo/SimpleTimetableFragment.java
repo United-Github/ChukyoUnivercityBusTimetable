@@ -45,12 +45,10 @@ public class SimpleTimetableFragment extends Fragment {
 
     }
 
-    @BindView(R.id.time_list_scrollview)
-    ScrollView scrollView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rv = inflater.inflate(R.layout.fragment_simple_timetable, container, false);
-        busTimeListViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list_scrollview));
+        busTimeListViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list));
         adapter = new TimeListCustomAdapter(getContext());
         setCurrentDate();
         return rv;

@@ -23,7 +23,6 @@ public class BusTimeListViewManager {
     public BusTimeListViewManager(View rootView){
         mContext = rootView.getContext();
         mRootView = rootView;
-        mScrollView = (ScrollView)rootView;
         mListView = (ListView)mRootView.findViewById(R.id.time_list);
         adapter = new TimeListCustomAdapter(mContext);
         mListView.setAdapter(adapter);

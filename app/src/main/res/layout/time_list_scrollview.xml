@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-android:id="@+id/time_list_scrollview"
-android:orientation="vertical"
-android:layout_width="match_parent"
-android:layout_height="wrap_content">
-<com.support.android.designlibdemo.TimetableList.layout.NonScrollListView
+<ListView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/time_list"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
-</ScrollView>
+    android:layout_height="match_parent"/>

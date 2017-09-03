@@ -33,6 +33,7 @@ import com.support.android.designlibdemo.TimetableList.layout.BusTimeListHeaderV
 import com.support.android.designlibdemo.TimetableList.layout.BusTimeListViewManager;
 import com.support.android.designlibdemo.TimetableList.layout.TimeListCustomAdapter;
 import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
+import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
 import java.util.Calendar;
 import java.util.List;
@@ -77,14 +78,15 @@ public class TimetableFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rv = inflater.inflate(R.layout.fragment_cheese_list, container, false);
         ButterKnife.bind(this, rv);
-        listViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list_scrollview));
+        listViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list));
         headerViewManager = new BusTimeListHeaderViewManager(rv.findViewById(R.id.time_header_root));
         headerViewManager.setOnNextClickListener(new onClickeHeaderViewButtonListener(true));
         headerViewManager.setOnPreviousClickListener(new onClickeHeaderViewButtonListener(false));
         adapter = new TimeListCustomAdapter(getContext());
         timeManager = ((BusTimerApplication)getActivity().getApplication()).getInstanceTimeManager();
         timer = new Timer();
-        setCurrentDay();
+        setTestData();
+//        setCurrentDay();
         return rv;
     }
 
@@ -191,5 +193,19 @@ public class TimetableFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+    }
+    private void setTestData(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2017, 9, 4);
+        currentBusTimeMonth = calendar.get(Calendar.MONTH) + 1;
+        currentBusTimeDate = calendar.get(Calendar.DATE);
+        try {
+            List<TimeItemModel> itemModels = timeManager.getBusSchedule(currentBusTimeMonth, currentBusTimeDate, depart);
+            for (final TimeItemModel item : itemModels){
+                listViewManager.addTimeItemModel(item);
+            }
+        } catch (TimeManager.NoScheduleException e) {
+        }
+        listViewManager.setCurrentTime(9, 6);
     }
 }
