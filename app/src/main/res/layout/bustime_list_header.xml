@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/time_header_root"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
@@ -21,6 +22,7 @@
         android:stateListAnimator="@drawable/round_button" />
 
     <LinearLayout
+        android:id="@+id/time_header_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -97,5 +99,13 @@
         android:layout_marginLeft="15dp"
         android:src="@drawable/ic_navigation_next"
         android:stateListAnimator="@drawable/round_button" />
+    <TextView
+        android:id="@+id/time_header_non"
+        android:layout_width="wrap_content"
+        android:text="@string/time_list_header_finished"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:visibility="gone"
+        android:layout_height="60dp"/>
 
 </LinearLayout>

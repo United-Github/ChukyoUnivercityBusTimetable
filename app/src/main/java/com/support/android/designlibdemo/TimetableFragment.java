@@ -17,75 +17,185 @@
 package com.support.android.designlibdemo;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.support.android.designlibdemo.TimeManager.TimeManager;
+import com.support.android.designlibdemo.TimetableList.layout.BusTimeListHeaderViewManager;
 import com.support.android.designlibdemo.TimetableList.layout.BusTimeListViewManager;
-import com.support.android.designlibdemo.TimetableList.layout.OnBusTimeItemClickListener;
 import com.support.android.designlibdemo.TimetableList.layout.TimeListCustomAdapter;
 import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
-import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+
 @SuppressLint("ValidFragment")
 public class TimetableFragment extends Fragment {
-    private BusTimeListViewManager busTimeListViewManager;
+    private BusTimeListViewManager listViewManager;
+    private BusTimeListHeaderViewManager headerViewManager;
     private TimeListCustomAdapter adapter;
     private final boolean isDepartJosui;
     private final int depart;
     private TimeManager timeManager;
+    private int currentBusTimeMonth;
+    private int currentBusTimeDate;
+    private int currentBusTimeHour;
+    private int currentBusTimeMinutes;
+    private Calendar currentBusTimeCalendar;
+    private long remainingMillis;
+    private Handler handler = new Handler();
+    private final static int updateInterval = 100;
+    private Timer timer;
+
     public TimetableFragment(boolean isDepartJosui){
         super();
         this.isDepartJosui = isDepartJosui;
         this.depart = (isDepartJosui)? TimeManager.DEPART_JOSUI : TimeManager.DEPART_UNIVERCITY;
     }
-    @BindView(R.id.time_list_scrollview)
-    ScrollView scrollView;
+
+//    @BindView(R.id.time_list_scrollview)
+//    ScrollView scrollView;
+    @BindView(R.id.bus_time_suspended)
+    TextView mSuspendedText;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rv = inflater.inflate(R.layout.fragment_cheese_list, container, false);
-        busTimeListViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list_scrollview));
+        ButterKnife.bind(this, rv);
+        listViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list));
+        headerViewManager = new BusTimeListHeaderViewManager(rv.findViewById(R.id.time_header_root));
+        headerViewManager.setOnNextClickListener(new onClickHeaderViewButtonListener(true));
+        headerViewManager.setOnPreviousClickListener(new onClickHeaderViewButtonListener(false));
         adapter = new TimeListCustomAdapter(getContext());
         timeManager = ((BusTimerApplication)getActivity().getApplication()).getInstanceTimeManager();
-        setTestData();
+        timer = new Timer();
+//        setTestData();
+        setCurrentDay();
         return rv;
     }
 
-
-    private void setTestData(){
+    private void setCurrentDay(){
         Calendar calendar = Calendar.getInstance();
-        int month = calendar.get(Calendar.MONTH) + 1;
-        int date = calendar.get(Calendar.DATE);
+        currentBusTimeMonth = calendar.get(Calendar.MONTH) + 1;
+        currentBusTimeDate = calendar.get(Calendar.DATE);
         try {
-            List<TimeItemModel> itemModels = timeManager.getBusSchedule(month, date, depart);
+            List<TimeItemModel> itemModels = timeManager.getBusSchedule(currentBusTimeMonth, currentBusTimeDate, depart);
             for (final TimeItemModel item : itemModels){
-                busTimeListViewManager.addTimeItemModel(item);
+                listViewManager.addTimeItemModel(item);
             }
+            timer.schedule(new updateRemainingTask(), 0, updateInterval);
         } catch (TimeManager.NoScheduleException e) {
+//            headerViewManager.setNonBusTime();
+            headerViewManager.setSuspended();
+//            scrollView.setVisibility(View.GONE);
+            mSuspendedText.setVisibility(View.VISIBLE);
             e.printStackTrace();
         }
+    }
+
+    private void setHeaderViewButtonLitener(){
+    }
+
+    private void updateCurrentBusTime(final int hour, final int minutes){
+        currentBusTimeHour = hour;
+        currentBusTimeMinutes = minutes;
+        currentBusTimeCalendar = Calendar.getInstance();
+        currentBusTimeCalendar.set(timeManager.YEAR, currentBusTimeMonth -1, currentBusTimeDate, currentBusTimeHour, currentBusTimeMinutes , 0);
+        remainingMillis = currentBusTimeCalendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+
+        headerViewManager.setDepartTime(currentBusTimeHour, currentBusTimeMinutes);
+        listViewManager.setHighLight(currentBusTimeHour, currentBusTimeMinutes);
+    }
+    class updateRemainingTask extends TimerTask {
+        @Override
+        public void run() {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    remainingMillis -= updateInterval;
+                    if (remainingMillis <= 0){
+                        Calendar current = Calendar.getInstance();
+                        try {
+                            int currentBusTime[] = timeManager.nearBusTime(
+                                    currentBusTimeMonth,
+                                    currentBusTimeDate,
+                                    current.get(Calendar.HOUR_OF_DAY),
+                                    current.get(Calendar.MINUTE),
+                                    depart);
+                            listViewManager.setUntilDisable(currentBusTime[0], currentBusTime[1]);
+                            updateCurrentBusTime(currentBusTime[0], currentBusTime[1]);
+                        } catch (TimeManager.NoScheduleException | TimeManager.DayOverflowException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        long remainingSeconds = remainingMillis / 1000;
+                        int minutes = (int)(remainingSeconds / 60);
+                        int seconds = (int)(remainingSeconds % 60);
+                        headerViewManager.setRemainingTime(minutes, seconds);
+                    }
+                }
+            });
+        }
+    }
+
+    private class onClickHeaderViewButtonListener implements View.OnClickListener{
+        private boolean next;
+        onClickHeaderViewButtonListener(boolean next){
+            this.next = next;
+        }
+        @Override
+        public void onClick(View view) {
+            try {
+                int busTime[];
+                if (next){
+                    busTime = timeManager.afterBusTime(
+                            currentBusTimeMonth,
+                            currentBusTimeDate,
+                            currentBusTimeHour,
+                            currentBusTimeMinutes,
+                            depart);
+                } else {
+                    busTime = timeManager.beforeBusTime(
+                            currentBusTimeMonth,
+                            currentBusTimeDate,
+                            currentBusTimeHour,
+                            currentBusTimeMinutes,
+                            depart);
+                }
+                updateCurrentBusTime(busTime[0], busTime[1]);
+            } catch (TimeManager.NoScheduleException e) {
+                e.printStackTrace();
+            } catch (TimeManager.DayOverflowException e) {
+                e.printStackTrace();
+            } catch (TimeManager.DayUnderflowException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private void setTestData(){
+        Calendar calendar = Calendar.getInstance();
+        currentBusTimeMonth = calendar.get(Calendar.MONTH) + 1;
+        currentBusTimeDate = calendar.get(Calendar.DATE);
+        try {
+            List<TimeItemModel> itemModels = timeManager.getBusSchedule(currentBusTimeMonth, currentBusTimeDate, depart);
+            for (final TimeItemModel item : itemModels){
+                listViewManager.addTimeItemModel(item);
+            }
+        } catch (TimeManager.NoScheduleException e) {
+        }
+        listViewManager.setCurrentTime(9, 6);
     }
 }

@@ -2,6 +2,7 @@ package com.support.android.designlibdemo.TimetableList.layout;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -23,7 +24,6 @@ public class BusTimeListViewManager {
     public BusTimeListViewManager(View rootView){
         mContext = rootView.getContext();
         mRootView = rootView;
-        mScrollView = (ScrollView)rootView;
         mListView = (ListView)mRootView.findViewById(R.id.time_list);
         adapter = new TimeListCustomAdapter(mContext);
         mListView.setAdapter(adapter);
