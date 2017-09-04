@@ -8,6 +8,7 @@ public enum  ScheduleType {
     A("A", "A"),B("B", "B"),C("C", "C"),Ad("Ad", "A'"),T("T", "臨時"), S("S", "運休日");
     private final String identifier;
     private final String name;
+
     ScheduleType(String identifier, String name){
         this.identifier = identifier;
         this.name = name;
