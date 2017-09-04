@@ -110,11 +110,10 @@ public class TimetableFragment extends Fragment {
     }
 
     private void updateCurrentBusTime(final int hour, final int minutes){
-        Log.d("hogeoge", currentBusTimeMonth + currentBusTimeDate + "");
         currentBusTimeHour = hour;
         currentBusTimeMinutes = minutes;
         currentBusTimeCalendar = Calendar.getInstance();
-        currentBusTimeCalendar.set(timeManager.YEAR, currentBusTimeMonth -1, currentBusTimeDate, currentBusTimeHour, currentBusTimeMinutes);
+        currentBusTimeCalendar.set(timeManager.YEAR, currentBusTimeMonth -1, currentBusTimeDate, currentBusTimeHour, currentBusTimeMinutes , 0);
         remainingMillis = currentBusTimeCalendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
 
         headerViewManager.setDepartTime(currentBusTimeHour, currentBusTimeMinutes);
