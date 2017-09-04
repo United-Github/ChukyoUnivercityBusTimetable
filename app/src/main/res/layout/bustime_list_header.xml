@@ -7,20 +7,14 @@
     android:background="@drawable/under_line_timetable_header"
     android:elevation="1.8dp"
     >
-
     <ImageButton
         android:id="@+id/time_header_previous"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@drawable/ripple"
-        android:elevation="4dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginRight="10dp"
         android:src="@drawable/ic_navigation_previous"
-        android:stateListAnimator="@drawable/round_button" />
-
+        style="?android:attr/borderlessButtonStyle" />
     <LinearLayout
         android:id="@+id/time_header_info"
         android:layout_width="wrap_content"
@@ -86,19 +80,14 @@
                 android:textSize="20dp" />
         </LinearLayout>
     </LinearLayout>
-
     <ImageButton
         android:id="@+id/time_header_next"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:background="@drawable/ripple"
-        android:elevation="4dp"
-        android:layout_marginLeft="15dp"
         android:src="@drawable/ic_navigation_next"
-        android:stateListAnimator="@drawable/round_button" />
+        style="?android:attr/borderlessButtonStyle" />
     <TextView
         android:id="@+id/time_header_non"
         android:layout_width="wrap_content"
