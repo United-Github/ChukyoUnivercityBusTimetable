@@ -1,6 +1,7 @@
 package com.support.android.designlibdemo.TimeManager;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.support.android.designlibdemo.R;
 import com.support.android.designlibdemo.TimetableList.model.ScheduleType;
@@ -49,21 +50,17 @@ public class TimeManager {
         context=_context;
         YEAR=context.getResources().getInteger(R.integer.year);
         initialize();
-        suspendedDays = getDateType(ScheduleType.S);
-
         monthSchedule = getMonthSchedule();
+        suspendedDays = getDateType(ScheduleType.S);
     }
     private void initialize(){
         //JSONObject jsonMonth, schedule_a, schedule_ad, schedule_b, schedule_c, schedule_t;
         try {
-            /*
-            jsonMonth = parseJson("calender.json");
-            schedule_a = parseJson("schedule_a.json");
-            schedule_ad = parseJson("schedule_ad.json");
-            schedule_b = parseJson("schedule_b.json");
-            schedule_c = parseJson("schedule_c.json");
-            schedule_t = parseJson("schedule_t.json");
-            */
+            scheduleA=new ScheduleDate();
+            scheduleAd=new ScheduleDate();
+            scheduleB=new ScheduleDate();
+            scheduleC=new ScheduleDate();
+            scheduleT=new ScheduleDate();
             kaizuData = parseJson("kaizu.json");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -256,13 +253,14 @@ public class TimeManager {
         ArrayList<ScheduleMonth> schedule_temp=getMonthList();
         ScheduleDate date_temp = getScheduleDate(schedule_temp.get(_month-1).days.get(_day-1));
         ArrayList<TimeItemModel> timeItemList = date_temp.getTimeItem(depart);
-        TimeItemModel timeHour = timeItemList.get(_hour-timeItemList.get(0).hour);
         if(_hour<timeItemList.get(0).hour){
             loHou=timeItemList.get(0).hour;
             loMin=timeItemList.get(loHou-timeItemList.get(0).hour).minutesList.get(0).minutes;
             int[] hAndM={loHou,loMin};
             return hAndM;
         }
+
+        TimeItemModel timeHour = timeItemList.get(_hour-timeItemList.get(0).hour);
         for(int i=0;i<=timeHour.minutesList.size();++i) {
             if(timeHour.minutesList.size()==i){
                 if(timeHour.hour==(timeItemList.get(0).hour+timeItemList.size()-1))
@@ -308,21 +306,25 @@ public class TimeManager {
         return hAndM;
     }
 
-    public int[] beforeBusTime(int _month,int _day,int _hour,int _minutes,final int depart) throws NoScheduleException,DayUnderflowException{
+    public int[] beforeBusTime(final int _month,final int _day,final int _hour,final int _minutes,final int depart) throws NoScheduleException,DayUnderflowException{
         int loHou=_hour;int loMin=_minutes;
         ArrayList<ScheduleMonth> schedule_temp=getMonthList();
         ScheduleDate date_temp = getScheduleDate(schedule_temp.get(_month-1).days.get(_day-1));
         ArrayList<TimeItemModel> timeItemList = date_temp.getTimeItem(depart);
-        TimeItemModel timeHour = timeItemList.get(_hour-timeItemList.get(0).hour);
-        for(int i=timeHour.minutesList.size()-1;i<=0;--i) {
-            if(timeItemList.get(loHou-timeItemList.get(0).hour).minutesList.get(i).minutes == _minutes){
+        final int minHour=timeItemList.get(0).hour;
+        TimeItemModel timeHour = timeItemList.get(_hour-minHour);
+        Log.d("hogehoge",(_hour-minHour)+":"+minHour+"");
+        for(int i=timeHour.minutesList.size()-1;i>=0;--i) {
+            Log.d("hogehoge",timeHour.minutesList.get(i).minutes+"");
+            if(timeHour.minutesList.get(i).minutes == _minutes){
                 if(i==0){
-                    if(timeHour.hour==timeItemList.get(0).hour)
+                    if(timeHour.hour==minHour)
                         throw new DayUnderflowException();
                     else{
                         loHou--;
-                        loMin=timeItemList.get(loHou-timeItemList.get(0).hour).minutesList
-                                .get(timeItemList.get(loHou-timeItemList.get(0).hour).minutesList.size()-1).minutes;
+                        final int beforeHour=loHou-minHour;
+                        loMin=timeItemList.get(beforeHour).minutesList
+                                .get(timeItemList.get(beforeHour).minutesList.size()-1).minutes;
                         break;
                     }
                 }
@@ -356,7 +358,7 @@ public class TimeManager {
 
     public static class ScheduleMonth{
         public int month;
-        public ArrayList<ScheduleType> days;
+        public ArrayList<ScheduleType> days = new ArrayList<ScheduleType>();
     }
 
     public static class ScheduleDate{
