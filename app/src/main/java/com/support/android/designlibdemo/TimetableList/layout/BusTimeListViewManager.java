@@ -25,7 +25,7 @@ public class BusTimeListViewManager {
         mContext = rootView.getContext();
         mRootView = rootView;
         mListView = (ListView)mRootView.findViewById(R.id.time_list);
-        adapter = new TimeListCustomAdapter(mContext);
+        adapter = new TimeListCustomAdapter(mContext, mListView);
         mListView.setAdapter(adapter);
         listener = null;
     }
@@ -47,14 +47,16 @@ public class BusTimeListViewManager {
     }
     public void setScrollTo(int hour, int minutes){
         final int y = adapter.getViewY(hour, minutes);
-        if (y != -1){
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    mScrollView.smoothScrollTo(0, y);
-                }
-            });
-        }
+        mListView.smoothScrollToPosition(adapter.getPotisionFromHour(hour)+1);
+        Log.d("hogehoge", y + "potioson");
+//        if (y != -1){
+//            new Handler().post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mScrollView.smoothScrollTo(0, y);
+//                }
+//            });
+//        }
     }
     // クリックリスナーをセット
     public void setBusTimeClickListener(OnBusTimeItemClickListener listener){

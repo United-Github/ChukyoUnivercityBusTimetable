@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.support.android.designlibdemo.R;
+import com.support.android.designlibdemo.TimeManager.TimeManager;
 import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
 import java.util.ArrayList;
@@ -98,6 +99,14 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
             }
         }
     }
+    public TimeMinutesItem getTimeMinutesItemByMinutes(int minutes){
+        for (TimeMinutesItem item: mList ) {
+            if (item.timeMinutesListItemModel.minutes == minutes){
+                return item ;
+            }
+        }
+        return  null;
+    }
     public int getMinutesByPotiision(int i){
         return mList.get(i).timeMinutesListItemModel.minutes;
     }
@@ -116,7 +125,16 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
         viewHolder.update(timeMinutesItem);
         return view;
     }
-
+    public int getItemPositionFromMinutes(int minutes) {
+        int potision = 0;
+        for (TimeMinutesItem item: mList ) {
+            if (item.timeMinutesListItemModel.minutes == minutes){
+                break;
+            }
+            potision ++;
+        }
+        return potision;
+    }
 //    public int getViewY(int minutes) {
 //        for (TimeMinutesItem item: mList ) {
 //            if (item.timeMinutesListItemModel.minutes == minutes && item.holder != null){
@@ -195,14 +213,16 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
             }else {
                 minutesText.setTextColor(disableTextColor);
             }
+            timeMinutesItem.topY = linearLayout.getTop();
         }
     }
-    private class TimeMinutesItem {
+    public class TimeMinutesItem {
         TimeMinutesListItemModel timeMinutesListItemModel;
         private int hour;
         public boolean isHighLight;
         public boolean enabled;
         private int remainingTime;
+        public int topY;
         private OnBusTimeItemClickListener listener;
         public TimeMinutesItem(Context context){
             isHighLight = false;

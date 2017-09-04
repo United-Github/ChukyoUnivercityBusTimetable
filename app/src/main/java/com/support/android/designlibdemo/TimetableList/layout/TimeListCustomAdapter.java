@@ -30,12 +30,14 @@ public class TimeListCustomAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private List<TimeItem> mDataList ;
     private Context mContext;
+    private ListView rootListView;
     private final String TAG = "TimeList_DEBUG";
 
-    public TimeListCustomAdapter(Context context){
+    public TimeListCustomAdapter(Context context, ListView rootListView){
         mInflater = LayoutInflater.from(context);
         mDataList = new ArrayList<>();
         mContext = context;
+        this.rootListView = rootListView;
     }
 
     @Override
@@ -123,20 +125,26 @@ public class TimeListCustomAdapter extends BaseAdapter {
             return;
         }
     }
-
+    public int getPotisionFromHour(int hour) {
+        int count = 0;
+        for (final TimeItem item : mDataList) {
+            if (item.timeItemModel.hour == hour) {
+                break;
+            }
+            count ++;
+        }
+        return  count;
+    }
     public int getViewY(int hour, int minutes){
-//        try {
-//            final TimeItem timeItem = getTimeItemFromHour(hour);
-//            final int y = timeItem.mAdapter.getViewY(minutes);
-//            if (y != -1){
-//                return ti.holder.linearLayout.getTop() + itemView.mAdapter.getViewY(minutes);
-//            } else {
-//                return -1;
-//            }
-//        } catch (NonHourException e) {
-//            return -1;
-//        }
-        return -1;
+        try {
+            // 時と分のViewのTOPを加算して表示
+            final TimeItem timeItem = getTimeItemFromHour(hour);
+            final int hourY = timeItem.topY;
+            final int minutesY = timeItem.mAdapter.getTimeMinutesItemByMinutes(minutes).topY;
+            return hourY + minutesY;
+        } catch (NonHourException e) {
+            return -1;
+        }
     }
     public void setAllItemClickListener(OnBusTimeItemClickListener listener){
         for (final TimeItem timeItem : mDataList){
@@ -192,13 +200,14 @@ public class TimeListCustomAdapter extends BaseAdapter {
                         timeItem.mAdapter));
             }
             minutesList.setAdapter(timeItem.mAdapter);
-
+            timeItem.topY = linearLayout.getTop();
         }
     }
     private class TimeItem {
         TimeItemModel timeItemModel;
         TimeListMinutesCustomAdapter mAdapter;
         OnBusTimeItemClickListener listener;
+        int topY;
 
         public TimeItem(Context context, TimeItemModel itemModel){
             timeItemModel = itemModel;

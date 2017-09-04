@@ -45,7 +45,6 @@ import butterknife.ButterKnife;
 public class TimetableFragment extends Fragment {
     private BusTimeListViewManager listViewManager;
     private BusTimeListHeaderViewManager headerViewManager;
-    private TimeListCustomAdapter adapter;
     private final boolean isDepartJosui;
     private final int depart;
     private TimeManager timeManager;
@@ -79,7 +78,6 @@ public class TimetableFragment extends Fragment {
         headerViewManager = new BusTimeListHeaderViewManager(rv.findViewById(R.id.time_header_root));
         headerViewManager.setOnNextClickListener(new onClickHeaderViewButtonListener(true));
         headerViewManager.setOnPreviousClickListener(new onClickHeaderViewButtonListener(false));
-        adapter = new TimeListCustomAdapter(getContext());
         timeManager = ((BusTimerApplication)getActivity().getApplication()).getInstanceTimeManager();
         timer = new Timer();
 //        setTestData();
@@ -176,6 +174,7 @@ public class TimetableFragment extends Fragment {
                             depart);
                 }
                 updateCurrentBusTime(busTime[0], busTime[1]);
+                listViewManager.setScrollTo(busTime[0], busTime[1]);
             } catch (TimeManager.NoScheduleException e) {
                 e.printStackTrace();
             } catch (TimeManager.DayOverflowException e) {

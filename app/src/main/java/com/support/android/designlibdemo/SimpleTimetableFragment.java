@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.ScrollView;
 
 import com.support.android.designlibdemo.TimeManager.TimeManager;
@@ -49,7 +50,7 @@ public class SimpleTimetableFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rv = inflater.inflate(R.layout.fragment_simple_timetable, container, false);
         busTimeListViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list));
-        adapter = new TimeListCustomAdapter(getContext());
+        adapter = new TimeListCustomAdapter(getContext(), (ListView)rv.findViewById(R.id.time_list));
         setCurrentDate();
         return rv;
     }
