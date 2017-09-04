@@ -28,10 +28,9 @@ import java.util.List;
 
 public class TimeManager {
     private Context context;
-//<<<<<<< Updated upstream
-//=======
     private ArrayList<Calendar> suspendedDays;
     private ArrayList<ScheduleMonth> scheduleYear;
+
     private ScheduleDate scheduleA;
     private ScheduleDate scheduleB;
     private ScheduleDate scheduleC;
@@ -41,7 +40,6 @@ public class TimeManager {
     private JSONObject kaizuData;
 
 
-//>>>>>>> Stashed changes
     public static final int DEPART_JOSUI = 0;
     public static final int DEPART_UNIVERCITY = 1;
     private static final String [] DEPART_STRING = new String[]{"J", "T"};
@@ -56,15 +54,17 @@ public class TimeManager {
         monthSchedule = getMonthSchedule();
     }
     private void initialize(){
-        JSONObject jsonMonth, schedule_a, schedule_ad, schedule_b, schedule_c, schedule_t;
+        //JSONObject jsonMonth, schedule_a, schedule_ad, schedule_b, schedule_c, schedule_t;
         try {
-            jsonMonth = parseJsonSub("calender.json");
-            schedule_a = parseJsonSub("schedule_a.json");
-            schedule_ad = parseJsonSub("schedule_ad.json");
-            schedule_b = parseJsonSub("schedule_b.json");
-            schedule_c = parseJsonSub("schedule_c.json");
-            schedule_t = parseJsonSub("schedule_t.json");
-            kaizuData = parseJsonSub("kaizu.json");
+            /*
+            jsonMonth = parseJson("calender.json");
+            schedule_a = parseJson("schedule_a.json");
+            schedule_ad = parseJson("schedule_ad.json");
+            schedule_b = parseJson("schedule_b.json");
+            schedule_c = parseJson("schedule_c.json");
+            schedule_t = parseJson("schedule_t.json");
+            */
+            kaizuData = parseJson("kaizu.json");
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -80,9 +80,9 @@ public class TimeManager {
             e.printStackTrace();
         }
     }
+
     public ArrayList<Calendar> getSuspendedDays(){
         return suspendedDays;
-//>>>>>>> Stashed changes
     }
 
     public ArrayList<ScheduleMonth> getMonthList() { return monthSchedule; }
@@ -109,23 +109,20 @@ public class TimeManager {
 
     public ArrayList<Calendar> getDateType(final ScheduleType _type) {
         ArrayList<Calendar> calender=new ArrayList<Calendar>();
-        try{
-            for(int month = 1; month<=12; month++) {
-                for (int date = 1; jsonMonth.getJSONObject(String.valueOf(month)).getString(String.valueOf(date)) != null; date++) {
-                    if(_type.toString().equals(jsonMonth.getJSONObject(String.valueOf(month)).getString(String.valueOf(date)))){
-                        Calendar calender_temp=Calendar.getInstance();
-                        calender_temp.set(YEAR,month-1,date);
-                        calender.add(calender_temp);
-                    }
+        for(int month=0;monthSchedule.size()>month;++month){
+            ArrayList<ScheduleType> daysList = monthSchedule.get(month).days;
+            for(int date=0;daysList.size()>date;++date){
+                if(_type.toString().equals(daysList.get(date).toString())){
+                    Calendar calender_temp=Calendar.getInstance();
+                    calender_temp.set(YEAR,month-1,date);
+                    calender.add(calender_temp);
                 }
             }
-        }catch (JSONException e){
-            e.printStackTrace();
         }
         return calender;
     }
 
-    private JSONObject parseJsonSub(String filename) throws JSONException,IOException{
+    private JSONObject parseJson(String filename) throws JSONException,IOException{
         InputStream inputStream = context.getAssets().open(filename);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -138,30 +135,18 @@ public class TimeManager {
         return new JSONObject(new String(outputStream.toByteArray()));
     }
 
-
-    public String[] getMonthSchedule(int _month){
-        List<String> schedule = new ArrayList<String>();
-        try {
-            JSONObject item = jsonMonth.getJSONObject(String.valueOf(_month));
-            for(int i=1;item.getString(String.valueOf(i))!=null;i++)
-            {
-                String temp=item.getString(String.valueOf(i));
-                schedule.add(temp);
-            }
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }finally {
-            return schedule.toArray(new String[schedule.size()]);
-        }
+    public ScheduleMonth getMonthSchedule(int _month){
+        return monthSchedule.get(_month-1);
     }
 
     private ArrayList<ScheduleMonth> getMonthSchedule(){
         ArrayList<ScheduleMonth> schedule=new ArrayList<ScheduleMonth>();
         try{
+            JSONObject monthJson=parseJson("calender.json");
             for(int month = 1; month<=12; month++) {
                 ScheduleMonth month_temp=new ScheduleMonth();
                 month_temp.month=month;
-                JSONObject item = jsonMonth.getJSONObject(String.valueOf(month));
+                JSONObject item = monthJson.getJSONObject(String.valueOf(month));
                 for (int date = 1; true; date++) {
                     try{
                         String temp=item.getString(String.valueOf(date));
@@ -175,43 +160,32 @@ public class TimeManager {
             }
         }catch (JSONException e){
             e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
         }
         return schedule;
     }
 
-    public List<TimeItemModel> getBusSchedule(final int _month, final int _day, final int depart) throws NoScheduleException{
-        List<TimeItemModel> timeList=new ArrayList<TimeItemModel>();
-        try {
-            String scheduleType = jsonMonth.getJSONObject(String.valueOf(_month)).getString(String.valueOf(_day));
-            timeList = getBusScheduleSub(classifySchedule(_month,_day), depart,scheduleType);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return timeList;
+    public ArrayList<TimeItemModel> getBusSchedule(final int _month, final int _day, final int depart) throws NoScheduleException{
+        return classifySchedule(_month,_day).getTimeItem(depart);
     }
 
     private ArrayList<TimeItemModel> getBusSchedule(String filename, final int depart) throws NoScheduleException{
         ArrayList<TimeItemModel> timeList=new ArrayList<TimeItemModel>();
         try {
             String kaizuType="A";
-            switch(filename){
-                case "schedule_a.json":
-                    kaizuType="A";
-                    break;
-                case "schedule_ad.json":
-                    kaizuType="Ad";
-                    break;
-                case "schedule_b.json":
-                    kaizuType="B";
-                    break;
-                case "schedule_c.json":
-                    kaizuType="C";
-                    break;
-                case "schedule_t.json":
-                    kaizuType="T";
-                    break;
+            if(filename.equals("schedule_a.json")){
+                kaizuType="A";
+            }else if(filename.equals("schedule_b.json")){
+                kaizuType="B";
+            }else if(filename.equals("schedule_c.json")){
+                kaizuType="C";
+            }else if(filename.equals("schedule_ad.json")){
+                kaizuType="Ad";
+            }else if(filename.equals("schedule_t.json")){
+                kaizuType="T";
             }
-            timeList = convertJSONObjToScheduleDate(parseJsonSub(filename), depart,kaizuType);
+            timeList = convertJSONObjToScheduleDate(parseJson(filename), depart,kaizuType);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -227,21 +201,24 @@ public class TimeManager {
         try{
             // 8時からJSONObj連想配列の要素が無くなるまで
             final JSONObject hourJson = scheduleJsonObject.getJSONObject(departString);
-            for(int i = 8; hourJson.getJSONArray(String.valueOf(i)) != null; ++i) {
-                TimeItemModel time_temp = new TimeItemModel();
-                time_temp.hour = i;
-                final JSONArray minutesArrayJson =  hourJson.getJSONArray(String.valueOf(i));
-                for(int j = 0; j < minutesArrayJson.length(); j++)
-                {
-                    boolean kaizuFlag = false;
-                    if(depart == DEPART_UNIVERCITY){
-                        if(kaizuData.getJSONObject(kaizuType).getJSONArray(String.valueOf(i)).getInt(j) == 1){
-                            kaizuFlag = true;
+            for(int i = 8; true; ++i) {
+                try {
+                    TimeItemModel time_temp = new TimeItemModel();
+                    time_temp.hour = i;
+                    final JSONArray minutesArrayJson = hourJson.getJSONArray(String.valueOf(i));
+                    for (int j = 0; j < minutesArrayJson.length(); j++) {
+                        boolean kaizuFlag = false;
+                        if (depart == DEPART_UNIVERCITY) {
+                            if (kaizuData.getJSONObject(kaizuType).getJSONArray(String.valueOf(i)).getInt(j) == 1) {
+                                kaizuFlag = true;
+                            }
                         }
+                        time_temp.minutesList.add(new TimeMinutesListItemModel(minutesArrayJson.getInt(j), kaizuFlag));
                     }
-                    time_temp.minutesList.add(new TimeMinutesListItemModel(minutesArrayJson.getInt(j), kaizuFlag));
+                    timeList.add(time_temp);
+                }catch(JSONException e){
+                    break;
                 }
-                timeList.add(time_temp);
             }
         }catch(JSONException e){
             e.printStackTrace();
@@ -249,119 +226,30 @@ public class TimeManager {
         return timeList;
     }
 
-    private JSONObject classifySchedule (int _month,int _day) throws NoScheduleException,JSONException{
-        String scheduleType = jsonMonth.getJSONObject(String.valueOf(_month)).getString(String.valueOf(_day));
-        JSONObject schedule_temp=schedule_a;
+    private ScheduleDate classifySchedule (int _month,int _day) throws NoScheduleException{
+        String scheduleType = monthSchedule.get(_month-1).days.get(_day-1).toString();
+        ScheduleDate schedule_temp=scheduleA;
         switch (scheduleType) {
             case "A":
-                schedule_temp = schedule_a;
+                schedule_temp = scheduleA;
                 break;
             case "B":
-                schedule_temp = schedule_b;
+                schedule_temp = scheduleB;
                 break;
             case "C":
-                schedule_temp = schedule_c;
+                schedule_temp = scheduleC;
                 break;
             case "T":
-                schedule_temp = schedule_t;
+                schedule_temp = scheduleT;
                 break;
             case "Ad":
-                schedule_temp = schedule_ad;
+                schedule_temp = scheduleAd;
                 break;
             default:
                 throw new NoScheduleException();
         }
         return schedule_temp;
     }
-
-    /*
-    public int[] nearBusTime(int _month,int _day,int _hour,int _minutes,final int depart) throws NoScheduleException,DayOverflowException{
-        final String departString = DEPART_STRING[depart];
-        int loHou=_hour;int loMin=_minutes;
-        try{
-            JSONObject schedule_temp=classifySchedule(_month,_day);
-            for(int i=0;i<=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).length();++i){
-                if(i==schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).length()) {
-                    if(loHou==21){
-                        throw new DayOverflowException();
-                    }else if(schedule_temp==schedule_c&&loHou==19){
-                        throw new DayOverflowException();
-                    }else{
-                        loHou++;
-                        loMin=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(0);
-                        break;
-                    }
-                }else if(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(i)>_minutes) {
-                    loMin = schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(i);
-                    break;
-                }
-            }
-        }catch(JSONException e){
-            e.printStackTrace();
-        }
-        int[] hAndM={loHou,loMin};
-        return hAndM;
-    }
-
-    public int[] afterBusTime(int _month,int _day,int _hour,int _minutes,final int depart) throws NoScheduleException,DayOverflowException{
-        final String departString = DEPART_STRING[depart];
-        int loHou=_hour;int loMin=_minutes;
-        try{
-            JSONObject schedule_temp=classifySchedule(_month,_day);
-            for(int i=0;i<schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).length();++i){
-                if(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(i)==_minutes){
-                    if(i+1==schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).length()){
-                        if(loHou==21){
-                            throw new DayOverflowException();
-                        }else if(schedule_temp==schedule_c&&loHou==19){
-                            throw new DayOverflowException();
-                        }else{
-                            loHou++;
-                            loMin=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(0);
-                            break;
-                        }
-                    }else{
-                        loMin=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(i+1);
-                    }
-                    break;
-                }
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        int[] hAndM={loHou,loMin};
-        return hAndM;
-    }
-
-    public int[] beforeBusTime(int _month,int _day,int _hour,int _minutes,final int depart) throws NoScheduleException,DayUnderflowException{
-        final String departString = DEPART_STRING[depart];
-        int loHou=_hour;int loMin=_minutes;
-        try{
-            JSONObject schedule_temp=classifySchedule(_month,_day);
-            for(int i=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).length()-1;i>=0;--i){
-                if(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(i)==_minutes){
-                    if(i==0){
-                        if(loHou==8){
-                            throw new DayUnderflowException();
-                        }else{
-                            loHou--;
-                            loMin=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).
-                                    getInt(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).length()-1);
-                            break;
-                        }
-                    }else{
-                        loMin=schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(loHou)).getInt(i-1);
-                    }
-                    break;
-                }
-            }
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
-        int[] hAndM={loHou,loMin};
-        return hAndM;
-    }
-    */
 
     public int[] nearBusTime(int _month,int _day,int _hour,int _minutes,final int depart) throws NoScheduleException,DayOverflowException{
         int loHou=_hour;int loMin=_minutes;
@@ -466,8 +354,6 @@ public class TimeManager {
         }
     }
 
-//<<<<<<< Updated upstream
-//=======
     public static class ScheduleMonth{
         public int month;
         public ArrayList<ScheduleType> days;

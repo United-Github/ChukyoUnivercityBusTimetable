@@ -23,6 +23,11 @@
         android:name=".BusTimerApplication"
         android:theme="@style/Theme.DesignDemo">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".Time.SetTime" />
+        <activity android:name=".SearchTimetable.SimpleTimeTableListActivity"></activity>
+        <activity android:name=".TimeManager.TimeManagerTestActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,9 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Time.SetTime" />
-        <activity android:name=".SearchTimetable.SimpleTimeTableListActivity"></activity>
-        <activity android:name=".TimeManager.TimeManagerTestActivity"></activity>
     </application>
 
 </manifest>
