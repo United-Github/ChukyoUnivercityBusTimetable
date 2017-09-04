@@ -7,6 +7,7 @@ import com.support.android.designlibdemo.TimetableList.model.ScheduleType;
 import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
 import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,15 +28,8 @@ import java.util.List;
 
 public class TimeManager {
     private Context context;
-    private JSONObject jsonMonth;
-    private JSONObject schedule_a;
-    private JSONObject schedule_b;
-    private JSONObject schedule_c;
-    private JSONObject schedule_t;
-    private JSONObject schedule_ad;
 //<<<<<<< Updated upstream
 //=======
-    private JSONObject kaizuData;
     private ArrayList<Calendar> suspendedDays;
     private ArrayList<ScheduleMonth> scheduleYear;
     private ScheduleDate scheduleA;
@@ -44,6 +38,7 @@ public class TimeManager {
     private ScheduleDate scheduleAd;
     private ScheduleDate scheduleT;
     private ArrayList<ScheduleMonth> monthSchedule;
+    private JSONObject kaizuData;
 
 
 //>>>>>>> Stashed changes
@@ -55,16 +50,26 @@ public class TimeManager {
     public TimeManager(Context _context){
         context=_context;
         YEAR=context.getResources().getInteger(R.integer.year);
-        try{
-            parseJson();
-        }catch(JSONException e){
+        initialize();
+        suspendedDays = getDateType(ScheduleType.S);
+
+        monthSchedule = getMonthSchedule();
+    }
+    private void initialize(){
+        JSONObject jsonMonth, schedule_a, schedule_ad, schedule_b, schedule_c, schedule_t;
+        try {
+            jsonMonth = parseJsonSub("calender.json");
+            schedule_a = parseJsonSub("schedule_a.json");
+            schedule_ad = parseJsonSub("schedule_ad.json");
+            schedule_b = parseJsonSub("schedule_b.json");
+            schedule_c = parseJsonSub("schedule_c.json");
+            schedule_t = parseJsonSub("schedule_t.json");
+            kaizuData = parseJsonSub("kaizu.json");
+        } catch (JSONException e) {
             e.printStackTrace();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
-//<<<<<<< Updated upstream
-//=======
-        suspendedDays = getDateType(ScheduleType.S);
         try {
             scheduleA.setArray(getBusSchedule("schedule_a.json", DEPART_JOSUI), getBusSchedule("schedule_a.json", DEPART_UNIVERCITY));
             scheduleAd.setArray(getBusSchedule("schedule_ad.json", DEPART_JOSUI), getBusSchedule("schedule_ad.json", DEPART_UNIVERCITY));
@@ -74,9 +79,7 @@ public class TimeManager {
         }catch(NoScheduleException e){
             e.printStackTrace();
         }
-        monthSchedule = getMonthSchedule();
     }
-
     public ArrayList<Calendar> getSuspendedDays(){
         return suspendedDays;
 //>>>>>>> Stashed changes
@@ -135,15 +138,6 @@ public class TimeManager {
         return new JSONObject(new String(outputStream.toByteArray()));
     }
 
-    private void parseJson() throws JSONException,IOException{
-        jsonMonth =parseJsonSub("calender.json");
-        schedule_a=parseJsonSub("schedule_a.json");
-        schedule_ad=parseJsonSub("schedule_ad.json");
-        schedule_b=parseJsonSub("schedule_b.json");
-        schedule_c=parseJsonSub("schedule_c.json");
-        schedule_t=parseJsonSub("schedule_t.json");
-        kaizuData=parseJsonSub("kaizu.json");
-    }
 
     public String[] getMonthSchedule(int _month){
         List<String> schedule = new ArrayList<String>();
@@ -217,7 +211,7 @@ public class TimeManager {
                     kaizuType="T";
                     break;
             }
-            timeList = getBusScheduleSub(parseJsonSub(filename), depart,kaizuType);
+            timeList = convertJSONObjToScheduleDate(parseJsonSub(filename), depart,kaizuType);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -226,25 +220,26 @@ public class TimeManager {
         return timeList;
     }
 
-    private ArrayList<TimeItemModel> getBusScheduleSub(final JSONObject _jObj, final int depart,String kaizuType){
+    // JSONObjectを受取、ScheduleDate型に変換して渡す
+    private ArrayList<TimeItemModel> convertJSONObjToScheduleDate(final JSONObject scheduleJsonObject, final int depart,String kaizuType){
         final String departString = DEPART_STRING[depart];
         ArrayList<TimeItemModel> timeList=new ArrayList<TimeItemModel>();
         try{
-            JSONObject schedule_temp=_jObj;
-            for(int i=8;schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i))!=null;++i) {
-                TimeItemModel time_temp=new TimeItemModel();
-                time_temp.hour=i;
-                for(int j=0;j<schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i)).length();j++)
+            // 8時からJSONObj連想配列の要素が無くなるまで
+            final JSONObject hourJson = scheduleJsonObject.getJSONObject(departString);
+            for(int i = 8; hourJson.getJSONArray(String.valueOf(i)) != null; ++i) {
+                TimeItemModel time_temp = new TimeItemModel();
+                time_temp.hour = i;
+                final JSONArray minutesArrayJson =  hourJson.getJSONArray(String.valueOf(i));
+                for(int j = 0; j < minutesArrayJson.length(); j++)
                 {
-                    JSONObject kaizuData_temp = kaizuData;
-                    if(depart==DEPART_JOSUI)
-                        time_temp.minutesList.add(new TimeMinutesListItemModel(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i)).getInt(j),false));
-                    else{
-                        boolean kaizuFlag=false;
-                        if(kaizuData_temp.getJSONObject(kaizuType).getJSONArray(String.valueOf(i)).getInt(j)==1)
-                            kaizuFlag=true;
-                        time_temp.minutesList.add(new TimeMinutesListItemModel(schedule_temp.getJSONObject(departString).getJSONArray(String.valueOf(i)).getInt(j),kaizuFlag));
+                    boolean kaizuFlag = false;
+                    if(depart == DEPART_UNIVERCITY){
+                        if(kaizuData.getJSONObject(kaizuType).getJSONArray(String.valueOf(i)).getInt(j) == 1){
+                            kaizuFlag = true;
+                        }
                     }
+                    time_temp.minutesList.add(new TimeMinutesListItemModel(minutesArrayJson.getInt(j), kaizuFlag));
                 }
                 timeList.add(time_temp);
             }
@@ -497,5 +492,4 @@ public class TimeManager {
             }
         }
     }
-//>>>>>>> Stashed changes
 }
