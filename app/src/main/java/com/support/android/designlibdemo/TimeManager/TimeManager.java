@@ -163,6 +163,10 @@ public class TimeManager {
         return schedule;
     }
 
+    public ScheduleType getBusScheduleType(final int _month, final int _day) throws NoScheduleException{
+        return monthSchedule.get(_month-1).days.get(_day-1);
+    }
+
     public ArrayList<TimeItemModel> getBusSchedule(final int _month, final int _day, final int depart) throws NoScheduleException{
         return classifySchedule(_month,_day).getTimeItem(depart);
     }
