@@ -2,6 +2,7 @@ package com.support.android.designlibdemo.TimetableList.layout;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ScrollView;

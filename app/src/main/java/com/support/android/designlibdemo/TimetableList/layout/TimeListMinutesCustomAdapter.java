@@ -139,8 +139,9 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
         for (TimeMinutesItem item : mList){
             if (item.timeMinutesListItemModel.minutes < minutes){
                 item.enabled = enabled;
+            } else {
+                break;
             }
-            break;
         }
     }
 
