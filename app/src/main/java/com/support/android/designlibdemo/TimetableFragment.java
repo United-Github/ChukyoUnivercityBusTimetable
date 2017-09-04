@@ -25,7 +25,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.support.android.designlibdemo.TimeManager.TimeManager;
@@ -33,13 +32,11 @@ import com.support.android.designlibdemo.TimetableList.layout.BusTimeListHeaderV
 import com.support.android.designlibdemo.TimetableList.layout.BusTimeListViewManager;
 import com.support.android.designlibdemo.TimetableList.layout.TimeListCustomAdapter;
 import com.support.android.designlibdemo.TimetableList.model.TimeItemModel;
-import com.support.android.designlibdemo.TimetableList.model.TimeMinutesListItemModel;
 
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.LogRecord;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,8 +77,8 @@ public class TimetableFragment extends Fragment {
         ButterKnife.bind(this, rv);
         listViewManager = new BusTimeListViewManager(rv.findViewById(R.id.time_list));
         headerViewManager = new BusTimeListHeaderViewManager(rv.findViewById(R.id.time_header_root));
-        headerViewManager.setOnNextClickListener(new onClickeHeaderViewButtonListener(true));
-        headerViewManager.setOnPreviousClickListener(new onClickeHeaderViewButtonListener(false));
+        headerViewManager.setOnNextClickListener(new onClickHeaderViewButtonListener(true));
+        headerViewManager.setOnPreviousClickListener(new onClickHeaderViewButtonListener(false));
         adapter = new TimeListCustomAdapter(getContext());
         timeManager = ((BusTimerApplication)getActivity().getApplication()).getInstanceTimeManager();
         timer = new Timer();
@@ -113,15 +110,15 @@ public class TimetableFragment extends Fragment {
     }
 
     private void updateCurrentBusTime(final int hour, final int minutes){
-            Log.d("hogeoge", currentBusTimeMonth + currentBusTimeDate + "");
-            currentBusTimeHour = hour;
-            currentBusTimeMinutes = minutes;
-            currentBusTimeCalendar = Calendar.getInstance();
-            currentBusTimeCalendar.set(timeManager.YEAR, currentBusTimeMonth -1, currentBusTimeDate, currentBusTimeHour, currentBusTimeMinutes);
-            remainingMillis = currentBusTimeCalendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
+        Log.d("hogeoge", currentBusTimeMonth + currentBusTimeDate + "");
+        currentBusTimeHour = hour;
+        currentBusTimeMinutes = minutes;
+        currentBusTimeCalendar = Calendar.getInstance();
+        currentBusTimeCalendar.set(timeManager.YEAR, currentBusTimeMonth -1, currentBusTimeDate, currentBusTimeHour, currentBusTimeMinutes);
+        remainingMillis = currentBusTimeCalendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
 
-            headerViewManager.setDepartTime(currentBusTimeHour, currentBusTimeMinutes);
-            listViewManager.setCurrentTime(currentBusTimeHour, currentBusTimeMinutes);
+        headerViewManager.setDepartTime(currentBusTimeHour, currentBusTimeMinutes);
+        listViewManager.setHighLight(currentBusTimeHour, currentBusTimeMinutes);
     }
     class updateRemainingTask extends TimerTask {
         @Override
@@ -139,6 +136,7 @@ public class TimetableFragment extends Fragment {
                                     current.get(Calendar.HOUR_OF_DAY),
                                     current.get(Calendar.MINUTE),
                                     depart);
+                            listViewManager.setUntilDisable(currentBusTime[0], currentBusTime[1]);
                             updateCurrentBusTime(currentBusTime[0], currentBusTime[1]);
                         } catch (TimeManager.NoScheduleException | TimeManager.DayOverflowException e) {
                             e.printStackTrace();
@@ -147,17 +145,16 @@ public class TimetableFragment extends Fragment {
                         long remainingSeconds = remainingMillis / 1000;
                         int minutes = (int)(remainingSeconds / 60);
                         int seconds = (int)(remainingSeconds % 60);
-                        headerViewManager.setRemainingTime(minutes, seconds);;
-                        listViewManager.setCurrentTime(currentBusTimeHour, currentBusTimeMinutes);
+                        headerViewManager.setRemainingTime(minutes, seconds);
                     }
                 }
             });
         }
     }
 
-    private class onClickeHeaderViewButtonListener implements View.OnClickListener{
+    private class onClickHeaderViewButtonListener implements View.OnClickListener{
         private boolean next;
-        onClickeHeaderViewButtonListener(boolean next){
+        onClickHeaderViewButtonListener(boolean next){
             this.next = next;
         }
         @Override

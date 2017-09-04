@@ -28,8 +28,6 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
     private List<TimeMinutesItem> mList;
     private LayoutInflater mInflater;
     private Context mContext;
-    private int colorNormalBackground;
-    private int colorHighLightBackground;
     public TimeListMinutesCustomAdapter(Context context){
         mList = new ArrayList<>();
         mInflater = LayoutInflater.from(context);
@@ -139,9 +137,10 @@ public class TimeListMinutesCustomAdapter extends BaseAdapter {
     // 指定した分まで無効化
     public void setUntilState(int minutes, boolean enabled){
         for (TimeMinutesItem item : mList){
-            if (item.timeMinutesListItemModel.minutes <= minutes){
+            if (item.timeMinutesListItemModel.minutes < minutes){
                 item.enabled = enabled;
             }
+            break;
         }
     }
 
