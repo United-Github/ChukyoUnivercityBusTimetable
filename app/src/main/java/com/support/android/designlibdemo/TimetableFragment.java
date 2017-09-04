@@ -85,8 +85,8 @@ public class TimetableFragment extends Fragment {
         adapter = new TimeListCustomAdapter(getContext());
         timeManager = ((BusTimerApplication)getActivity().getApplication()).getInstanceTimeManager();
         timer = new Timer();
-        setTestData();
-//        setCurrentDay();
+//        setTestData();
+        setCurrentDay();
         return rv;
     }
 
@@ -112,25 +112,16 @@ public class TimetableFragment extends Fragment {
     private void setHeaderViewButtonLitener(){
     }
 
-    private void updateCurrentBusTime(Calendar current){
-        current = Calendar.getInstance();
-        try {
-            int currentBusTime[] = timeManager.nearBusTime(
-                    currentBusTimeMonth,
-                    currentBusTimeDate,
-                    current.get(Calendar.HOUR_OF_DAY),
-                    current.get(Calendar.MINUTE),
-                    depart);
-            currentBusTimeHour = currentBusTime[0];
-            currentBusTimeMinutes = currentBusTime[1];
+    private void updateCurrentBusTime(final int hour, final int minutes){
+            Log.d("hogeoge", currentBusTimeMonth + currentBusTimeDate + "");
+            currentBusTimeHour = hour;
+            currentBusTimeMinutes = minutes;
             currentBusTimeCalendar = Calendar.getInstance();
             currentBusTimeCalendar.set(timeManager.YEAR, currentBusTimeMonth -1, currentBusTimeDate, currentBusTimeHour, currentBusTimeMinutes);
             remainingMillis = currentBusTimeCalendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis();
-            headerViewManager.setDepartTime(currentBusTimeHour, currentBusTimeMinutes);
-        } catch (TimeManager.NoScheduleException | TimeManager.DayOverflowException e) {
-            e.printStackTrace();
-        }
 
+            headerViewManager.setDepartTime(currentBusTimeHour, currentBusTimeMinutes);
+            listViewManager.setCurrentTime(currentBusTimeHour, currentBusTimeMinutes);
     }
     class updateRemainingTask extends TimerTask {
         @Override
@@ -140,7 +131,18 @@ public class TimetableFragment extends Fragment {
                 public void run() {
                     remainingMillis -= updateInterval;
                     if (remainingMillis <= 0){
-                        updateCurrentBusTime(Calendar.getInstance());
+                        Calendar current = Calendar.getInstance();
+                        try {
+                            int currentBusTime[] = timeManager.nearBusTime(
+                                    currentBusTimeMonth,
+                                    currentBusTimeDate,
+                                    current.get(Calendar.HOUR_OF_DAY),
+                                    current.get(Calendar.MINUTE),
+                                    depart);
+                            updateCurrentBusTime(currentBusTime[0], currentBusTime[1]);
+                        } catch (TimeManager.NoScheduleException | TimeManager.DayOverflowException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         long remainingSeconds = remainingMillis / 1000;
                         int minutes = (int)(remainingSeconds / 60);
@@ -177,14 +179,7 @@ public class TimetableFragment extends Fragment {
                             currentBusTimeMinutes,
                             depart);
                 }
-                Calendar current = Calendar.getInstance();
-                current.set(
-                        timeManager.YEAR,
-                        currentBusTimeMonth,
-                        currentBusTimeDate,
-                        busTime[0],
-                        busTime[1]);
-                updateCurrentBusTime(current);
+                updateCurrentBusTime(busTime[0], busTime[1]);
             } catch (TimeManager.NoScheduleException e) {
                 e.printStackTrace();
             } catch (TimeManager.DayOverflowException e) {
@@ -196,7 +191,6 @@ public class TimetableFragment extends Fragment {
     }
     private void setTestData(){
         Calendar calendar = Calendar.getInstance();
-        calendar.set(2017, 9, 4);
         currentBusTimeMonth = calendar.get(Calendar.MONTH) + 1;
         currentBusTimeDate = calendar.get(Calendar.DATE);
         try {
