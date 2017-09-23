@@ -111,7 +111,7 @@ public class TimeManager {
             for(int date=0;daysList.size()>date;++date){
                 if(_type.toString().equals(daysList.get(date).toString())){
                     Calendar calender_temp=Calendar.getInstance();
-                    calender_temp.set(YEAR,month-1,date);
+                    calender_temp.set(YEAR,month,date+1);
                     calender.add(calender_temp);
                 }
             }
@@ -275,7 +275,7 @@ public class TimeManager {
                     break;
                 }
             }else if(timeItemList.get(loHou-timeItemList.get(0).hour).minutesList.get(i).minutes > _minutes){
-                loMin=timeHour.minutesList.get(i+1).minutes;
+                loMin=timeHour.minutesList.get(i).minutes;
                 break;
             }
         }
