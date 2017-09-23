@@ -111,7 +111,10 @@ public class TimeManager {
             for(int date=0;daysList.size()>date;++date){
                 if(_type.toString().equals(daysList.get(date).toString())){
                     Calendar calender_temp=Calendar.getInstance();
-                    calender_temp.set(YEAR,month,date+1);
+                    if(month<3)
+                        calender_temp.set(YEAR+1,month,date+1);
+                    else
+                        calender_temp.set(YEAR,month,date+1);
                     calender.add(calender_temp);
                 }
             }
